@@ -15,4 +15,4 @@ License: GPLv2 or later
 
 // TODO: Add license
 
-// if (!defined("ABSPATH"))  die
+if (!defined("ABSPATH"))  die(" (╯°□°）╯︵ ┻━┻ ");
