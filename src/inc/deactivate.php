@@ -3,7 +3,9 @@
   * @package korekthor
   */
 
-class KorekthorDeactivate
+namespace Inc;
+
+class Deactivate
 {
   public static function deactivate()
   {

@@ -3,6 +3,10 @@
 /**
  * @package korekthor
  */
+
+use Inc\Activate;
+use Inc\Deactivate;
+
 /*
 Plugin Name: Korekthor pro WordPress
 Plugin URI: https://korekthor.cz/ 
@@ -17,25 +21,41 @@ License: GPLv2 or later
 
 if (!defined("ABSPATH"))  die("(╯°□°）╯︵ ┻━┻ ");
 
+if (file_exists(dirname(__FILE__) . "/vendor/autoload.php")) {
+  require_once dirname(__FILE__) . "/vendor/autoload.php";
+}
+
 class KorekthorPlugin
 {
+  public $plugin;
+
+  function __construct()
+  {
+    $this->plugin = plugin_basename(__FILE__);
+  }
+
   function activate()
   {
-    require_once plugin_dir_path(__FILE__) . "inc/activate.php";
-    KorekthorActivate::activate();
+    Activate::activate();
   }
 
   function deactivate()
   {
-    require_once plugin_dir_path(__FILE__) . "inc/deactivate.php";
-    KorekthorDeactivate::deactivate();
+    Deactivate::deactivate();
   }
 
   function register()
   {
     add_action("admin_enqueue_scripts", array($this, "enqueue"));
     add_action("admin_menu", array($this, "add_admin_pages"));
-    add_filter("plugin_action_links_" . plugin_basename(__FILE__), array($this, "settings_link"));
+    add_filter("plugin_action_links_$this->plugin", array($this, "settings_link"));
+  }
+
+  function settings_link($links)
+  {
+    $settings_link = '<a href="admin.php?page=korekthor">Nastavení</a>';
+    array_push($links, $settings_link);
+    return $links;
   }
 
   function enqueue()
@@ -57,13 +77,6 @@ class KorekthorPlugin
       $logo,
       null
     );
-  }
-
-  function settings_link($links)
-  {
-    $settings_link = '<a href="admin.php?page=korekthor">Nastavení</a>';
-    array_push($links, $settings_link);
-    return $links;
   }
 
   function admin_index()

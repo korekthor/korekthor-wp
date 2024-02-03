@@ -1,3 +1,4 @@
 .env
 wp-app
 wp-data
+/vendor/
