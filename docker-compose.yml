@@ -9,6 +9,7 @@ services:
       - ./config/php.conf.ini:/usr/local/etc/php/conf.d/conf.ini
       - ./wp-app:/var/www/html # Full wordpress project
       - ./src:/var/www/html/wp-content/plugins/korekthor
+      - ./vendor:/var/www/html/wp-content/plugins/korekthor/vendor
       #- ./plugin-name/trunk/:/var/www/html/wp-content/plugins/plugin-name # Plugin development
       #- ./theme-name/trunk/:/var/www/html/wp-content/themes/theme-name # Theme development
     environment:
@@ -16,6 +17,8 @@ services:
       WORDPRESS_DB_NAME: "${DB_NAME}"
       WORDPRESS_DB_USER: root
       WORDPRESS_DB_PASSWORD: "${DB_ROOT_PASSWORD}"
+      WORDPRESS_DEBUG: 1
+
     depends_on:
       - db
     links:
