@@ -10,6 +10,7 @@ use Inc\Api\Callbacks\FieldCallbacks;
 use \Inc\Api\SettingsApi;
 use \Inc\Base\BaseController;
 use \Inc\Api\Callbacks\AdminCallbacks;
+use Inc\Base\KorekthorApiController;
 
 class Settings extends BaseController {
   public $settings;
@@ -22,6 +23,7 @@ class Settings extends BaseController {
     $this->callbacks = new AdminCallbacks();
     $this->fields = new FieldCallbacks();
 
+    add_action("admin_init", array($this, "after_settings_save"));
 
     $this->set_settings();
     $this->set_sections();
@@ -92,5 +94,24 @@ class Settings extends BaseController {
     ];
 
     $this->settings->set_fields($args);
+  }
+
+  public function after_settings_save() {
+    if (!isset($_POST["submit"])) return;
+
+    // check if user is allowed to save settings
+    if (!current_user_can("manage_options")) return;
+
+    // check if api key is valid;
+    if (isset($_POST["korekthor_api_key"])) {
+      $data = KorekthorApiController::get_company_data();
+
+      if (isset($data["data"])) {
+        add_settings_error("korekthor_options_group", "settings_updated", "Nové nastavení bylo úspěšně uloženo.", "updated");
+        return;
+      }
+
+      add_settings_error("korekthor_options_group", "settings_updated", $data["error"], "error");
+    }
   }
 }

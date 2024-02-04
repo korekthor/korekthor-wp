@@ -28,8 +28,6 @@ class KorekthorApiController {
     if ($status !== 200) {
       $error = "$status - " . (isset($decoded_body["error"]) ? $decoded_body["error"] : "Neznámá chyba.");
 
-      var_dump($decoded_body);
-
       return [
         "error" => "Nepodařilo se načíst data o firmě. API klíč může být neplatný. Server odpověděl: <code>$error</code>",
       ];
