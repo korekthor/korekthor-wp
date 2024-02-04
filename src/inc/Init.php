@@ -12,7 +12,8 @@ final class Init {
    */
   public static function get_services() {
     return [
-      Pages\Admin::class,
+      Pages\Dashboard::class,
+      Pages\Settings::class,
       Base\Enqueue::class,
       Base\SettingsLinks::class
     ];
