@@ -6,7 +6,7 @@
   <form action="options.php" method="POST">
     <?php
     settings_fields("korekthor_options_group");
-    do_settings_sections("korekthor_api");
+    do_settings_sections("korekthor_settings");
     submit_button();
     ?>
   </form>

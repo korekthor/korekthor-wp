@@ -6,6 +6,7 @@
 
 namespace Inc\Pages;
 
+use Inc\Api\Callbacks\FieldCallbacks;
 use \Inc\Api\SettingsApi;
 use \Inc\Base\BaseController;
 use \Inc\Api\Callbacks\AdminCallbacks;
@@ -15,10 +16,12 @@ class Admin extends BaseController {
   public $pages;
   public $subpages;
   public $callbacks;
+  public $fields;
 
   public function register() {
     $this->settings = new SettingsApi();
     $this->callbacks = new AdminCallbacks();
+    $this->fields = new FieldCallbacks();
 
     $this->set_pages();
 
@@ -74,9 +77,14 @@ class Admin extends BaseController {
     $args = [
       [
         "option_group" => "korekthor_options_group",
+        "option_name" => "korekthor_enable",
+        "callback" => array($this->fields, "checkbox_sanitize"),
+      ],
+      [
+        "option_group" => "korekthor_options_group",
         "option_name" => "korekthor_api_key",
         "callback" => array($this->callbacks, "korekthor_options_group"),
-      ]
+      ],
     ];
 
     $this->settings->set_settings($args);
@@ -87,8 +95,8 @@ class Admin extends BaseController {
       [
         "id" => "korekthor_admin_api",
         "title" => "Nastavení API",
-        "callback" => array($this->callbacks, "korekthor_options_group"),
-        "page" => "korekthor_api",
+        "callback" => array($this->callbacks, "korekthor_admin_section"),
+        "page" => "korekthor_settings",
       ]
     ];
 
@@ -101,11 +109,22 @@ class Admin extends BaseController {
         "id" => "korekthor_api_key",
         "title" => "API klíč",
         "callback" => array($this->callbacks, "korekthor_api_key"),
-        "page" => "korekthor_api",
+        "page" => "korekthor_settings",
         "section" => "korekthor_admin_api",
         "args" => [
           "label_for" => "korekthor_api_key",
           "class" => "example-class",
+        ]
+      ],
+      [
+        "id" => "korekthor_enable",
+        "title" => "Povolit korekthor",
+        "callback" => array($this->fields, "checkbox_field"),
+        "page" => "korekthor_settings",
+        "section" => "korekthor_admin_api",
+        "args" => [
+          "label_for" => "korekthor_enable",
+          "class" => "ui-toggle",
         ]
       ]
     ];

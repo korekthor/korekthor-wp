@@ -22,12 +22,13 @@ class AdminCallbacks extends BaseController {
   }
 
   public function korekthor_admin_section() {
-    echo "Manage Korekthor settings";
+    echo "Spravovat nastavení Korekthoru pro WordPress";
   }
 
   public function korekthor_api_key() {
     $apikey = esc_attr(get_option("korekthor_api_key"));
-
-    echo "<textarea type='text' class='regular-text' name='korekthor_api_key' placeholder='Tady vložte váš API klíč...' rows='5'>$apikey</textarea>";
+?>
+    <textarea type='text' class='regular-text' name='korekthor_api_key' placeholder='Tady vložte váš API klíč...' rows='5'><?= $apikey; ?></textarea>
+<?
   }
 }
