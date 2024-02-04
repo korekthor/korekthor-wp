@@ -6,6 +6,7 @@
   "license": "GPL-2.0-or-later",
   "main": "src/index.js",
   "devDependencies": {
+    "@types/wordpress__edit-post": "^7.5.6",
     "@webpack-cli/generators": "^3.0.7",
     "@wordpress/scripts": "^27.1.0",
     "css-loader": "^6.10.0",
@@ -25,10 +26,11 @@
   "scripts": {
     "start": "wp-scripts start --output-path=src/assets",
     "build": "wp-scripts build --output-path=src/assets"
-},
+  },
   "dependencies": {
     "@types/wordpress__block-editor": "^11.5.10",
     "@wordpress/block-editor": "^12.18.2",
-    "@wordpress/rich-text": "^6.27.0"
+    "@wordpress/edit-post": "^7.27.2",
+    "@wordpress/plugins": "^6.18.0"
   }
 }

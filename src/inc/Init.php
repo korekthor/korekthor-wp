@@ -16,7 +16,7 @@ final class Init {
       Pages\Settings::class,
       Base\Enqueue::class,
       Base\SettingsLinks::class,
-      TapIn\VanillaPost::class
+      TapIns\VanillaPost::class
     ];
   }
 

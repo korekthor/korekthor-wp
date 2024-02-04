@@ -37,4 +37,40 @@ class KorekthorApiController {
       "data" => $decoded_body,
     ];
   }
+
+  public static function correct_text($text, $dictionaries = []) {
+    $api_key = get_option("korekthor_api_key");
+    if (!$api_key) {
+      return [
+        "error" => "API klíč není nastaven.",
+      ];
+    }
+
+    $encoded_body = json_encode([
+      "text" => $text,
+      "dictionaries" => $dictionaries,
+    ]);
+
+    $response = wp_remote_post(KOREKTHOR_API_URL . "/editor/company", [
+      "headers" => [
+        "X-API-KEY" => $api_key,
+        "Content-Type" => "application/json",
+      ],
+      "body" => $encoded_body,
+    ]);
+
+    $status = wp_remote_retrieve_response_code($response);
+
+    $decoded_body = json_decode(wp_remote_retrieve_body($response), true);
+
+    if ($status > 299) {
+      return [
+        "error" => (isset($decoded_body["error"]) ? $decoded_body["error"] : "Neznámá chyba.")
+      ];
+    }
+
+    return [
+      "data" => $decoded_body,
+    ];
+  }
 }

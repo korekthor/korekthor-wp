@@ -1,4 +1,3 @@
-import { setupCustomButton } from "./ts/post-edit";
 import "./scss/admin-style.scss";
 
 const onWindowLoad = () => {
@@ -26,5 +25,3 @@ const onWindowLoad = () => {
 };
 
 window.addEventListener("load", onWindowLoad);
-
-setupCustomButton();
