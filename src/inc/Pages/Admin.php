@@ -51,6 +51,7 @@ class Admin extends BaseController {
       ]
     ];
 
+
     $this->subpages = [
       [
         "parent_slug" => "korekthor",
@@ -78,7 +79,12 @@ class Admin extends BaseController {
       [
         "option_group" => "korekthor_options_group",
         "option_name" => "korekthor_enable",
-        "callback" => array($this->fields, "checkbox_sanitize"),
+        "callback" => [
+          "sanitize_callback" => array($this->fields, "checkbox_sanitize"),
+          "default" => true,
+          "type" => "boolean",
+          "description" => "Povolit korekthor na tomto webu.",
+        ],
       ],
       [
         "option_group" => "korekthor_options_group",
