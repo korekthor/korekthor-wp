@@ -7,8 +7,8 @@
 namespace Inc\Base;
 
 class KorekthorApiController {
-  public static function get_company_data() {
-    $api_key = get_option("korekthor_api_key");
+  public static function get_company_data($api_key = null) {
+    $api_key = $api_key ?: get_option("korekthor_api_key");
 
     if (!$api_key) {
       return [

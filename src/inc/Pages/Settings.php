@@ -99,15 +99,17 @@ class Settings extends BaseController {
   public function after_settings_save() {
     if (!isset($_POST["submit"])) return;
 
+
     // check if user is allowed to save settings
     if (!current_user_can("manage_options")) return;
 
     // check if api key is valid;
     if (isset($_POST["korekthor_api_key"])) {
-      $data = KorekthorApiController::get_company_data();
+      $api_key = $_POST["korekthor_api_key"];
+      $data = KorekthorApiController::get_company_data($api_key);
 
       if (isset($data["data"])) {
-        add_settings_error("korekthor_options_group", "settings_updated", "Nové nastavení bylo úspěšně uloženo.", "updated");
+        add_settings_error("korekthor_options_group", "settings_updated", "Nové nastavení bylo úspěšně uloženo. Připojeno k firmě " . $data['data']["name"] . ".", "updated");
         return;
       }
 
