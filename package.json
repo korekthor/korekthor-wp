@@ -4,8 +4,10 @@
   "description": "Korekthor plugin pro WordPress - integrujte sílu korekthoru přímo do vašich stránek!",
   "author": "TenViki",
   "license": "GPL-2.0-or-later",
+  "main": "src/index.js",
   "devDependencies": {
     "@webpack-cli/generators": "^3.0.7",
+    "@wordpress/scripts": "^27.1.0",
     "css-loader": "^6.10.0",
     "mini-css-extract-plugin": "^2.8.0",
     "prettier": "^3.2.4",
@@ -21,9 +23,12 @@
     "jquery": "./node_modules/jquery/dist/jquery.js"
   },
   "scripts": {
-    "build": "webpack --mode=production --node-env=production",
-    "build:dev": "webpack --mode=development",
-    "build:prod": "webpack --mode=production --node-env=production",
-    "watch": "webpack --watch"
+    "start": "wp-scripts start --output-path=src/assets",
+    "build": "wp-scripts build --output-path=src/assets"
+},
+  "dependencies": {
+    "@types/wordpress__block-editor": "^11.5.10",
+    "@wordpress/block-editor": "^12.18.2",
+    "@wordpress/rich-text": "^6.27.0"
   }
 }

@@ -30,7 +30,7 @@ class Dashboard extends BaseController {
   }
 
   public function set_pages() {
-    $logo = "data:image/svg+xml;base64," . base64_encode(file_get_contents($this->plugin_path . "assets/logo.svg"));
+    $logo = "data:image/svg+xml;base64," . base64_encode(file_get_contents($this->plugin_path . "img/logo.svg"));
 
     $this->pages = [
       [

@@ -10,8 +10,8 @@ class Enqueue extends BaseController {
   }
 
   function enqueue() {
-    // enqueue all our scripts
-    wp_enqueue_style("korekthorstyle", $this->plugin_url . "assets/admin-style.css");
-    wp_enqueue_script("korekthorscript", $this->plugin_url  . "assets/admin-script.js");
+    // // enqueue all our scripts
+    wp_enqueue_style("korekthorstyle", $this->plugin_url . "assets/index.css");
+    wp_enqueue_script("korekthorscript", $this->plugin_url  . "assets/index.js");
   }
 }
