@@ -13,7 +13,7 @@ class SettingsLinks extends BaseController {
   }
 
   public function settings_link($links) {
-    $settings_link = '<a href="admin.php?page=korekthor">Nastavení</a>';
+    $settings_link = '<a href="admin.php?page=korekthor_api">Nastavení</a>';
     array_push($links, $settings_link);
     return $links;
   }
