@@ -27,9 +27,49 @@
       <h3>
         Přehled
       </h3>
-      <p>
-        Vítejte v Korekthoru pro WordPress. Tento plugin vám umožní jednoduše integrovat Korekthor do vašeho webu.
-      </p>
+      <div>
+        <? if (!$api_key_is_set) { ?>
+          <div>
+            <h4>
+              API klíč není nastaven.
+            </h4>
+            <p>
+              Pro získání API klíče přejďete do administrace firmy <a href="https://korekthor.cz/firma" target="_blank">zde</a> a vytvořte nový API klíč.
+            </p>
+            <p>
+              Po vytvoření API klíče přejděte do <a href="<?= admin_url("admin.php?page=korekthor_settings") ?>">nastavení</a> a vložte ho do pole "API klíč".
+            </p>
+          </div>
+        <? } else if (isset($data["error"])) { ?>
+          <div>
+            <h4>
+              Nepodařilo se načíst data o firmě.
+            </h4>
+            <p>
+              <?= $data["error"] ?>
+            </p>
+            <p>
+              Zkontrolujte prosím, zda je váš API klíč správně nastaven.
+              Můžete ho zkontrolovat v <a href="<?= admin_url("admin.php?page=korekthor_settings") ?>">nastavení</a>.
+            </p>
+          </div>
+        <? } else { ?>
+          <div>
+            <h4>
+              Přihlášeno k firmě
+            </h4>
+
+            <div class="korekthor-company">
+              <div><?= $company["name"] ?></div>
+              Vytvořeno: <?= date("d. m. Y", strtotime($company["createdAt"])) ?> <br />
+              Jméno API klíče: <?= $company["apiKey"] ?>
+            </div>
+            <p>
+              Pro správu firmy přejděte do <a href="https://korekthor.cz/firma" target="_blank">administrace firmy</a>.
+            </p>
+          </div>
+        <? } ?>
+      </div>
     </div>
 
     <div id="updates" class="tab-pane fade">

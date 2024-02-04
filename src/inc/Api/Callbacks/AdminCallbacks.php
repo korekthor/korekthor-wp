@@ -7,9 +7,22 @@
 namespace Inc\Api\Callbacks;
 
 use Inc\Base\BaseController;
+use Inc\Base\KorekthorApiController;
 
 class AdminCallbacks extends BaseController {
+
   public function admin_dashboard() {
+    $api_key = get_option("korekthor_api_key");
+    $api_key_is_set = true;
+
+    if (!$api_key) {
+      $api_key_is_set = false;
+    } else {
+      $data = KorekthorApiController::get_company_data();
+      if (isset($data["data"])) $company = $data["data"];
+    }
+
+
     return require_once "$this->plugin_path/templates/admin.php";
   }
 

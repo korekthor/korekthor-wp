@@ -15,6 +15,7 @@ class Dashboard extends BaseController {
   public $pages;
   public $subpages;
   public $settings;
+  public $api_controller;
 
   public function register() {
     $this->callbacks = new AdminCallbacks();

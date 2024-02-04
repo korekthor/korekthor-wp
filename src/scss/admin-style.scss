@@ -3,26 +3,25 @@
   width: 100%;
   margin: 0;
   list-style-type: none;
-  border-bottom: 1px solid #ddd;
+  margin-top: .5rem;
 }
 
 .nav-tabs > li {
   float: left;
   margin-bottom: -1px;
 
+  &:not(:last-child) {
+    margin-right: 2px;
+  }
+
   a {
     margin-right: 2px;
     line-height: 1.5;
     padding: 10px;
-    border: 1px solid transparent;
     border-radius: 4px 4px 0 0;
     display: block;
     text-decoration: none;
   }
-}
-
-.nav-tabs > li > a:hover {
-  border-color: #eee #eee #ddd;
 }
 
 .nav-tabs > li.active > a,
@@ -30,13 +29,7 @@
 .nav-tabs > li > a:focus {
   color: #555;
   background-color: #fff;
-  border: 1px solid #ddd;
-  /* border-bottom-color: transparent; */
   cursor: default;
-}
-
-.nav-tabs > li.active > a {
-  border-bottom-color: transparent;
 }
 
 .nav-tabs > li:not(.active) > a{
@@ -55,4 +48,17 @@
   box-sizing: border-box;
   background-color: #fff;
   box-shadow: 0 10px 6px rgba(0, 0, 0, 0.05);
+}
+
+.korekthor-company {
+  margin-top: 20px;
+  padding: 20px;
+  width: fit-content;
+  background-color: #f1f1f1;
+  border-radius: 5px;
+
+  div {
+    margin-bottom: 10px;
+    font-size: 1.25rem;
+  }
 }

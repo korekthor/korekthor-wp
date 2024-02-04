@@ -6,6 +6,6 @@
     "target": "es5",
     "allowJs": true
   },
-  "exclude": ["node_modules", "wp-app", "wp-data"],
+  "exclude": ["node_modules", "wp-app", "wp-data", "src/assets/"],
   "include": ["src"]
 }
