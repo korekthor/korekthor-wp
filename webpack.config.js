@@ -40,9 +40,21 @@ const config = {
       },
       {
         test: /\.s[ac]ss$/i,
-        use: [stylesHandler, "css-loader", "sass-loader"],
-        // dont create a javascript file for css
-        type: "asset/source",
+        use: [
+          stylesHandler,
+          {
+            loader: "css-loader",
+            options: {
+              sourceMap: !isProduction,
+            },
+          },
+          {
+            loader: "sass-loader",
+            options: {
+              sourceMap: !isProduction,
+            },
+          },
+        ],
       },
       {
         test: /\.(eot|svg|ttf|woff|woff2|png|jpg|gif)$/i,
