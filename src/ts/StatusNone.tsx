@@ -1,7 +1,6 @@
-import React from "react";
+import React, { FC } from "react";
 
 declare var korekthor_ajax: { nonce: string; plugin_url: string };
-
 const StatusNone = () => {
   return (
     <div className="korekthor-none">

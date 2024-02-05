@@ -56,8 +56,9 @@ class VanillaPost extends BaseController {
     check_ajax_referer("korekthor_req", "nonce");
 
     $text = $_POST["text"];
+    $dictionaries = $_POST["dictionaries"];
 
-    $response = KorekthorApiController::correct_text($text);
+    $response = KorekthorApiController::correct_text($text, $dictionaries);
 
     wp_send_json($response);
   }
