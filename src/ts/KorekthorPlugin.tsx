@@ -24,7 +24,7 @@ export const KorekthorPlugin = () => {
     return getSelectedBlock();
   }, []);
 
-  const handleCorrection = (text: string) => {
+  const handleCorrection = (text: string, element: Element) => {
     dispatch("core/edit-post").openGeneralSidebar(
       "korekthor/korekthor-sidebar"
     );
@@ -37,8 +37,7 @@ export const KorekthorPlugin = () => {
       contentType: "application/x-www-form-urlencoded;charset=utf-8",
       text: text,
     }).done((data: any) => {
-      console.log(data);
-      // setLoading(false);
+      console.log(text, data, element);
     });
   };
 
@@ -51,9 +50,8 @@ export const KorekthorPlugin = () => {
 
     const blockElement = wpIframe.contentWindow.document.querySelector(query);
     const text = selectedBlock.attributes.content;
-    console.log(blockElement, text, query);
 
-    handleCorrection(text);
+    handleCorrection(text, blockElement);
   };
 
   return (

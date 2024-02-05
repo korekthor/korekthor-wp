@@ -38,6 +38,25 @@ class KorekthorApiController {
     ];
   }
 
+  public static function get_dictionaries() {
+    $response = wp_remote_get(KOREKTHOR_API_URL . "/dictionary/plugin");
+
+    $status = wp_remote_retrieve_response_code($response);
+    $decoded_body = json_decode(wp_remote_retrieve_body($response), true);
+
+    if ($status !== 200) {
+      $error = "$status - " . (isset($decoded_body["error"]) ? $decoded_body["error"] : "Neznámá chyba.");
+
+      return [
+        "error" => "Odpoveď serveru: $error",
+      ];
+    }
+
+    return [
+      "data" => $decoded_body,
+    ];
+  }
+
   public static function correct_text($text, $dictionaries = []) {
     $api_key = get_option("korekthor_api_key");
     if (!$api_key) {

@@ -36,12 +36,16 @@ class VanillaPost extends BaseController {
 
     $korekthor_nonce = wp_create_nonce("korekthor_req");
 
+    $dictionaries = KorekthorApiController::get_dictionaries();
+
     wp_localize_script(
       "korekthor_editor",
       "korekthor_ajax",
       array(
         "nonce" => $korekthor_nonce,
         "plugin_url" => $this->plugin_url,
+        "dictionaries" => $dictionaries['data'],
+        "dictionaries_error" => $dictionaries['error'] ?? null,
       ),
     );
 
