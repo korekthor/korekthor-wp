@@ -6,6 +6,7 @@
   "license": "GPL-2.0-or-later",
   "main": "src/index.js",
   "devDependencies": {
+    "@types/jquery": "^3.5.29",
     "@types/wordpress__edit-post": "^7.5.6",
     "@webpack-cli/generators": "^3.0.7",
     "@wordpress/scripts": "^27.1.0",
@@ -31,6 +32,7 @@
     "@types/wordpress__block-editor": "^11.5.10",
     "@wordpress/block-editor": "^12.18.2",
     "@wordpress/edit-post": "^7.27.2",
-    "@wordpress/plugins": "^6.18.0"
+    "@wordpress/plugins": "^6.18.0",
+    "jquery": "^3.7.1"
   }
 }

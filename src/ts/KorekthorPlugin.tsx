@@ -1,35 +1,44 @@
-import { PluginSidebar, PluginSidebarMoreMenuItem } from "@wordpress/edit-post";
-import { ToolbarButton } from "@wordpress/components";
-import React, { useState, useEffect } from "react";
-import KorekthorIcon from "./icon";
-import {
-  RichTextToolbarButton as _RichTextToolbarButton,
-  useBlockProps,
-} from "@wordpress/block-editor";
-import KorekthorToolbarButton from "./ToolbarButton";
+import { RichTextToolbarButton as _RichTextToolbarButton } from "@wordpress/block-editor";
 import { useSelect } from "@wordpress/data";
+import { PluginSidebar, PluginSidebarMoreMenuItem } from "@wordpress/edit-post";
 import $ from "jquery";
+import React from "react";
+import KorekthorToolbarButton from "./ToolbarButton";
+import { dispatch } from "@wordpress/data";
+import KorekthorIcon from "./icon";
+import { Spinner } from "@wordpress/components";
+import StatusLoading from "./StatusLoading";
+import StatusNone from "./StatusNone";
 
 const RichTextToolbarButton = _RichTextToolbarButton as any;
 
-declare const ajaxurl: string;
-declare const korekthor_ajax: {
-  nonce: string;
-};
+declare var ajaxurl: string;
+declare var korekthor_ajax: { nonce: string; plugin_url: string };
 
 export const KorekthorPlugin = () => {
+  const [loading, setLoading] = React.useState(false);
+  const [corrections, setCorrections] = React.useState([] as any[]);
+
   const selectedBlock = useSelect((select) => {
     const { getSelectedBlock } = select("core/block-editor") as any;
     return getSelectedBlock();
   }, []);
 
   const handleCorrection = (text: string) => {
+    dispatch("core/edit-post").openGeneralSidebar(
+      "korekthor/korekthor-sidebar"
+    );
+
+    setLoading(true);
+
     $.post(ajaxurl, {
       nonce: korekthor_ajax.nonce,
       action: "korekthor_correction",
+      contentType: "application/x-www-form-urlencoded;charset=utf-8",
       text: text,
     }).done((data: any) => {
       console.log(data);
+      // setLoading(false);
     });
   };
 
@@ -60,7 +69,15 @@ export const KorekthorPlugin = () => {
         title="Korekthor"
         icon={<KorekthorIcon />}
       >
-        Content of the sidebar
+        <div className="korekthor-sidebar">
+          {loading ? (
+            <StatusLoading />
+          ) : corrections.length == 0 ? (
+            <StatusNone />
+          ) : (
+            <p>Korekce: TODO</p>
+          )}
+        </div>
       </PluginSidebar>
 
       <KorekthorToolbarButton />

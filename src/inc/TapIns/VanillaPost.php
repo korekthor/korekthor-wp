@@ -32,6 +32,8 @@ class VanillaPost extends BaseController {
       $editor_asset_file["version"],
     );
 
+    wp_enqueue_style("korekthor_editor", $this->plugin_url . "assets/editor.css");
+
     $korekthor_nonce = wp_create_nonce("korekthor_req");
 
     wp_localize_script(
@@ -39,6 +41,7 @@ class VanillaPost extends BaseController {
       "korekthor_ajax",
       array(
         "nonce" => $korekthor_nonce,
+        "plugin_url" => $this->plugin_url,
       ),
     );
 
