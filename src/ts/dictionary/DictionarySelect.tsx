@@ -35,8 +35,6 @@ const DictionarySelect: React.FC<DictionarySelectProps> = ({
     categories: [],
   };
 
-  console.log(korekthor_ajax);
-
   if (!korekthor_ajax.dictionaries.find((d) => d.id === "company")) {
     korekthor_ajax.dictionaries.unshift(companyDictionary);
   }

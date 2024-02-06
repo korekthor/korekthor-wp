@@ -6,9 +6,10 @@ import React from "react";
 import KorekthorToolbarButton from "./ToolbarButton";
 import { dispatch } from "@wordpress/data";
 import KorekthorIcon from "./icon";
-import StatusLoading from "./StatusLoading";
-import StatusNone from "./StatusNone";
+import StatusLoading from "./status/StatusLoading";
+import StatusNone from "./status/StatusNone";
 import DictionarySelect from "./dictionary/DictionarySelect";
+import StatusError from "./status/StatusError";
 
 const RichTextToolbarButton = _RichTextToolbarButton as any;
 
@@ -21,6 +22,7 @@ export const KorekthorPlugin = () => {
   const [enabledDictionaries, setEnabledDictionaries] = React.useState(
     [] as string[]
   );
+  const [error, setError] = React.useState("");
 
   const selectedBlock = useSelect((select) => {
     const { getSelectedBlock } = select("core/block-editor") as any;
@@ -33,6 +35,7 @@ export const KorekthorPlugin = () => {
     );
 
     setLoading(true);
+    setError("");
 
     $.post(ajaxurl, {
       nonce: korekthor_ajax.nonce,
@@ -41,7 +44,16 @@ export const KorekthorPlugin = () => {
       text: text,
       dictionaries: enabledDictionaries,
     }).done((data: any) => {
-      console.log(text, data, element);
+      console.log("korekthor response", data);
+
+      if (data.error) {
+        setError(data.error);
+        setLoading(false);
+        return;
+      }
+
+      setCorrections(data.data);
+      setLoading(false);
     });
   };
 
@@ -77,8 +89,10 @@ export const KorekthorPlugin = () => {
             <StatusLoading />
           ) : corrections.length == 0 ? (
             <StatusNone />
+          ) : error ? (
+            <StatusError error={error} />
           ) : (
-            <p>Korekce: TODO</p>
+            <p>Todo: Make corrections</p>
           )}
         </div>
 
