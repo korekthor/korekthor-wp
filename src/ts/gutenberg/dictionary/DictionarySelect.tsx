@@ -15,7 +15,7 @@ const DictionarySelect: React.FC<DictionarySelectProps> = ({ onDictionariesChang
   const companyDictionary: Dictionary = {
     id: "company",
     name: "Firemní slovník",
-    description: "Slovník vaší firmy.",
+    description: "Slovník definovaný firmou pro interní použití.",
     categories: [],
   };
 
