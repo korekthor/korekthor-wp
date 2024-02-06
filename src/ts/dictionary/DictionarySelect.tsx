@@ -17,7 +17,7 @@ declare var korekthor_ajax: {
   dictionaries: Dictionary[];
   dictionaries_error: string;
   dictionaries_selected: string[];
-  update_dictionaries_nonce: string;
+  nonce: string;
 };
 
 interface DictionarySelectProps {
@@ -68,7 +68,7 @@ const DictionarySelect: React.FC<DictionarySelectProps> = ({
 
   const handleUpdateDictionaries = () => {
     $.post(ajaxurl, {
-      nonce: korekthor_ajax.update_dictionaries_nonce,
+      nonce: korekthor_ajax.nonce,
       action: "korekthor_update_dictionaries",
       contentType: "application/x-www-form-urlencoded;charset=utf-8",
       dictionaries: selected,

@@ -16,7 +16,8 @@ final class Init {
       Pages\Settings::class,
       Base\Enqueue::class,
       Base\SettingsLinks::class,
-      TapIns\VanillaPost::class
+      Base\AjaxController::class,
+      TapIns\GutenbergEditor::class
     ];
   }
 
