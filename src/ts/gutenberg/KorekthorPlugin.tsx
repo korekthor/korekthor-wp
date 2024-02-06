@@ -13,15 +13,10 @@ import StatusError from "./status/StatusError";
 
 const RichTextToolbarButton = _RichTextToolbarButton as any;
 
-declare var ajaxurl: string;
-declare var korekthor_ajax: { nonce: string; plugin_url: string };
-
 export const KorekthorPlugin = () => {
   const [loading, setLoading] = React.useState(false);
   const [corrections, setCorrections] = React.useState([] as any[]);
-  const [enabledDictionaries, setEnabledDictionaries] = React.useState(
-    [] as string[]
-  );
+  const [enabledDictionaries, setEnabledDictionaries] = React.useState([] as string[]);
   const [error, setError] = React.useState("");
 
   const selectedBlock = useSelect((select) => {
@@ -30,9 +25,7 @@ export const KorekthorPlugin = () => {
   }, []);
 
   const handleCorrection = (text: string, element: Element) => {
-    dispatch("core/edit-post").openGeneralSidebar(
-      "korekthor/korekthor-sidebar"
-    );
+    dispatch("core/edit-post").openGeneralSidebar("korekthor/korekthor-sidebar");
 
     setLoading(true);
     setError("");
@@ -60,9 +53,7 @@ export const KorekthorPlugin = () => {
   const handleClick = () => {
     const query = `[data-block="${selectedBlock.clientId}"]`;
 
-    const wpIframe = document.querySelector(
-      "iframe[name='editor-canvas']"
-    ) as HTMLIFrameElement;
+    const wpIframe = document.querySelector("iframe[name='editor-canvas']") as HTMLIFrameElement;
 
     const blockElement = wpIframe.contentWindow.document.querySelector(query);
     const text = selectedBlock.attributes.content;
@@ -72,18 +63,10 @@ export const KorekthorPlugin = () => {
 
   return (
     <>
-      <PluginSidebarMoreMenuItem
-        target="korekthor-sidebar"
-        icon={<KorekthorIcon />}
-      >
+      <PluginSidebarMoreMenuItem target="korekthor-sidebar" icon={<KorekthorIcon />}>
         Korekthor
       </PluginSidebarMoreMenuItem>
-      <PluginSidebar
-        name="korekthor-sidebar"
-        title="Korekthor"
-        className="korekthor-sidebar"
-        icon={<KorekthorIcon />}
-      >
+      <PluginSidebar name="korekthor-sidebar" title="Korekthor" className="korekthor-sidebar" icon={<KorekthorIcon />}>
         <div className="korekthor-sidebar-plugin">
           {loading ? (
             <StatusLoading />
@@ -101,11 +84,7 @@ export const KorekthorPlugin = () => {
 
       <KorekthorToolbarButton />
 
-      <RichTextToolbarButton
-        icon={<KorekthorIcon />}
-        title="Opravit text"
-        onClick={handleClick}
-      />
+      <RichTextToolbarButton icon={<KorekthorIcon />} title="Opravit text" onClick={handleClick} />
     </>
   );
 };

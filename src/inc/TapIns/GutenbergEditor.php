@@ -25,7 +25,7 @@ class GutenbergEditor extends BaseController {
     );
   }
   public function enqueue_editor_assets() {
-    $this->utils->load_assets("editor", "korekthor_gutenberg_editor");
+    $this->utils->enqueue_assets("editor", "korekthor_gutenberg_editor");
     $this->utils->localize_editor_script("korekthor_gutenberg_editor");
   }
 }

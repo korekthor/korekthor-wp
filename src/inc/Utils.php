@@ -25,7 +25,7 @@ class Utils extends BaseController {
     return false;
   }
 
-  public function load_assets($filename, $name) {
+  public function enqueue_assets($filename, $name) {
     $editor_asset_file = include($this->plugin_path . "assets/$filename.asset.php");
 
     wp_enqueue_script(

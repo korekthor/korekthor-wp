@@ -1,8 +1,7 @@
 import "./scss/admin-style.scss";
 
 const onWindowLoad = () => {
-  const links =
-    document.querySelectorAll<HTMLAnchorElement>("ul.nav-tabs > li a");
+  const links = document.querySelectorAll<HTMLAnchorElement>("ul.nav-tabs > li a");
   const pages = document.querySelectorAll("div.tab-content > .tab-pane");
 
   // get the # from url

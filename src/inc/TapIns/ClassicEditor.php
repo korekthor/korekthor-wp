@@ -19,13 +19,17 @@ class ClassicEditor extends BaseController {
 
     $this->utils = new Utils();
 
+    add_action(
+      "admin_enqueue_scripts",
+      array($this, "enqueue_assets"),
+    );
     add_action("add_meta_boxes", array($this, "add_korekthor_meta_box"));
   }
 
-  public function load_assets() {
+  public function enqueue_assets() {
     if (!Utils::is_classic_editor()) return;
 
-    $this->utils->load_assets("classic", "korekthor_classic_editor");
+    $this->utils->enqueue_assets("classic", "korekthor_classic_editor");
     $this->utils->localize_editor_script("korekthor_classic_editor");
   }
 
@@ -40,21 +44,6 @@ class ClassicEditor extends BaseController {
   }
 
   public function korekthor_meta_box_html() {
-?>
-    <div>
-      <div id="main">
-        Tady se budou dít veliké věci
-      </div>
-
-      <template id="korekthor-classic-idle">
-        <div class="korekthor-classic-idle">
-          <p>Není opraven žádný text, pro opravu klikněte na tlačítko "Zkontrolovat článek". To opraví celý obsah tohoto článku.</p>
-          <button class="button button-primary button-large" id="korekthor-check-button">
-            Zkontrolovat článek
-          </button>
-        </div>
-      </template>
-    </div>
-<?
+    return require_once "$this->plugin_path/templates/ClassicEditorMetaBox.php";
   }
 }

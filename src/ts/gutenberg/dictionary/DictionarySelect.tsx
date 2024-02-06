@@ -4,29 +4,13 @@ import { useEffect } from "react";
 import { TextControl } from "@wordpress/components";
 import DictionaryRecord from "./DictionaryRecord";
 import $ from "jquery";
-
-export interface Dictionary {
-  id: string;
-  name: string;
-  description: string;
-  categories: string[];
-}
-
-declare var ajaxurl: string;
-declare var korekthor_ajax: {
-  dictionaries: Dictionary[];
-  dictionaries_error: string;
-  dictionaries_selected: string[];
-  nonce: string;
-};
+import { Dictionary } from "../../../types";
 
 interface DictionarySelectProps {
   onDictionariesChange: (dictionaries: string[]) => void;
 }
 
-const DictionarySelect: React.FC<DictionarySelectProps> = ({
-  onDictionariesChange,
-}) => {
+const DictionarySelect: React.FC<DictionarySelectProps> = ({ onDictionariesChange }) => {
   // add company dictionary
   const companyDictionary: Dictionary = {
     id: "company",
@@ -41,9 +25,7 @@ const DictionarySelect: React.FC<DictionarySelectProps> = ({
 
   const [dictionariesOpened, setDictionariesOpened] = React.useState(false);
   const [search, setSearch] = React.useState("");
-  const [selected, setSelected] = React.useState<string[]>(
-    korekthor_ajax.dictionaries_selected || []
-  );
+  const [selected, setSelected] = React.useState<string[]>(korekthor_ajax.dictionaries_selected || []);
 
   const contentRef = React.useRef<HTMLDivElement>(null);
   const [height, setHeight] = React.useState(0);
@@ -90,30 +72,23 @@ const DictionarySelect: React.FC<DictionarySelectProps> = ({
   }, [updated]);
 
   // filtering dictionaries
-  const filteredDictionaries = korekthor_ajax.dictionaries.filter(
-    (dictionary) => {
-      if (search === "") {
-        return true;
-      }
-
-      const searchLower = search.toLowerCase();
-      return (
-        dictionary.name.toLowerCase().includes(searchLower) ||
-        dictionary.description.toLowerCase().includes(searchLower) ||
-        dictionary.categories.some((category) =>
-          category.toLowerCase().includes(searchLower)
-        )
-      );
+  const filteredDictionaries = korekthor_ajax.dictionaries.filter((dictionary) => {
+    if (search === "") {
+      return true;
     }
-  );
+
+    const searchLower = search.toLowerCase();
+    return (
+      dictionary.name.toLowerCase().includes(searchLower) ||
+      dictionary.description.toLowerCase().includes(searchLower) ||
+      dictionary.categories.some((category) => category.toLowerCase().includes(searchLower))
+    );
+  });
 
   return (
     <div className="korekthor-dictionary">
       <div className="korekthor-dictionary-header">
-        <Button
-          variant="link"
-          onClick={() => setDictionariesOpened(!dictionariesOpened)}
-        >
+        <Button variant="link" onClick={() => setDictionariesOpened(!dictionariesOpened)}>
           {dictionariesOpened ? "Skrýt slovníky" : "Zobrazit slovníky"}
         </Button>
 
@@ -124,10 +99,7 @@ const DictionarySelect: React.FC<DictionarySelectProps> = ({
         )}
       </div>
 
-      <div
-        className="korekthor-dictionary-content-wrapper"
-        style={{ maxHeight: height }}
-      >
+      <div className="korekthor-dictionary-content-wrapper" style={{ maxHeight: height }}>
         <div className="korekthor-dictionary-content" ref={contentRef}>
           <TextControl
             className="korekthor-dictionary-search"
@@ -141,19 +113,13 @@ const DictionarySelect: React.FC<DictionarySelectProps> = ({
               key={dictionary.id}
               dictionary={dictionary}
               onChange={(state) => {
-                setSelected((prev) =>
-                  state
-                    ? [...prev, dictionary.id]
-                    : prev.filter((id) => id !== dictionary.id)
-                );
+                setSelected((prev) => (state ? [...prev, dictionary.id] : prev.filter((id) => id !== dictionary.id)));
               }}
               enabled={selected.includes(dictionary.id)}
             />
           ))}
           {filteredDictionaries.length === 0 && (
-            <p className="korekthor-dictionary-error">
-              Nebyly nalezeny žádné slovníky. Zkuste změnit hledaný výraz.
-            </p>
+            <p className="korekthor-dictionary-error">Nebyly nalezeny žádné slovníky. Zkuste změnit hledaný výraz.</p>
           )}
         </div>
       </div>
