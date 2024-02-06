@@ -73,7 +73,7 @@ export const KorekthorPlugin = () => {
           ) : error ? (
             <StatusError error={error} />
           ) : (
-            <p>Todo: Make corrections</p>
+            <h1>TODO: Do the magic</h1>
           )}
         </div>
 
