@@ -12,17 +12,25 @@ services:
       - ./vendor:/var/www/html/wp-content/plugins/korekthor/vendor
       #- ./plugin-name/trunk/:/var/www/html/wp-content/plugins/plugin-name # Plugin development
       #- ./theme-name/trunk/:/var/www/html/wp-content/themes/theme-name # Theme development
+    networks:
+      - wp_network
     environment:
       WORDPRESS_DB_HOST: db
       WORDPRESS_DB_NAME: "${DB_NAME}"
       WORDPRESS_DB_USER: root
       WORDPRESS_DB_PASSWORD: "${DB_ROOT_PASSWORD}"
+      WP_ALLOW_MULTISITE: 1
       WORDPRESS_DEBUG: 1
 
     depends_on:
       - db
     links:
       - db
+
+  ftp_server:
+    image: stilliard/pure-ftpd
+    networks:
+      - wp_network
 
   wpcli:
     image: wordpress:cli
@@ -37,6 +45,8 @@ services:
     depends_on:
       - db
       - wp
+    networks:
+      - wp_network
 
   pma:
     image: phpmyadmin:latest # https://hub.docker.com/_/phpmyadmin
@@ -50,6 +60,8 @@ services:
       - ${IP}:8080:80
     links:
       - db:db
+    networks:
+      - wp_network
 
   db:
     image: mysql:latest # https://hub.docker.com/_/mysql/ - or mariadb https://hub.docker.com/_/mariadb
@@ -68,6 +80,12 @@ services:
     environment:
       MYSQL_DATABASE: "${DB_NAME}"
       MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
+    networks:
+      - wp_network
 
 volumes:
   db_data:
+
+
+networks:
+  wp_network:
