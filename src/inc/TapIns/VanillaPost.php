@@ -33,7 +33,7 @@ class VanillaPost extends BaseController {
       $editor_asset_file["version"],
     );
 
-    wp_enqueue_style("korekthor_editor", $this->plugin_url . "assets/editor.css");
+    wp_enqueue_style("korekthor_editor", $this->plugin_url . "assets/editor.css", array(), $editor_asset_file["version"]);
 
     $korekthor_nonce = wp_create_nonce("korekthor_req");
 
