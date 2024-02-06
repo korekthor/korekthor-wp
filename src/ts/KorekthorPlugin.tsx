@@ -110,7 +110,7 @@ export const KorekthorPlugin = () => {
   );
 };
 
-// open korekthor sidebar on dom ready
-$(document).ready(() => {
-  dispatch("core/edit-post").openGeneralSidebar("korekthor/korekthor-sidebar");
-});
+// // open korekthor sidebar on dom ready
+// $(document).ready(() => {
+//   dispatch("core/edit-post").openGeneralSidebar("korekthor/korekthor-sidebar");
+// });

@@ -17,7 +17,8 @@ final class Init {
       Base\Enqueue::class,
       Base\SettingsLinks::class,
       Base\AjaxController::class,
-      TapIns\GutenbergEditor::class
+      TapIns\GutenbergEditor::class,
+      TapIns\ClassicEditor::class,
     ];
   }
 
