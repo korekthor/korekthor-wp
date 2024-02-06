@@ -6,5 +6,6 @@ module.exports = {
     ...defaultConfig.entry,
     index: "./src/index.ts",
     editor: "./src/editor.ts",
+    classic: "./src/classic.ts",
   },
 };

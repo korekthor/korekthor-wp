@@ -1,4 +1,4 @@
-import { KorekthorPlugin } from "./ts/KorekthorPlugin";
+import { KorekthorPlugin } from "./ts/gutenberg/KorekthorPlugin";
 import { registerPlugin } from "@wordpress/plugins";
 import "./scss/editor.scss";
 
