@@ -61,4 +61,24 @@
       <p></p>
     </label>
   </template>
+  <template id="korekthor-classic-error">
+    <div class="korekthor-classic-error">
+      <p>Došlo k chybě při načítání slovníků. <br />Detail chyby:</p>
+
+      <p>
+      <pre id="korekthor-error-detail"></pre>
+      </p>
+
+      <a href="#" class="thickbox korekthor-classic-link" id="korekthor-button-idle">
+        Zavřít
+      </a>
+    </div>
+  </template>
+  <template id="korekthor-classic-results">
+    <div class="korekthor-classic-results">
+      <h1>
+        TODO: Do the magic
+      </h1>
+    </div>
+  </template>
 </div>

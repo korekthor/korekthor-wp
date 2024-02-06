@@ -37,8 +37,6 @@ export const KorekthorPlugin = () => {
       text: text,
       dictionaries: enabledDictionaries,
     }).done((data: any) => {
-      console.log("korekthor response", data);
-
       if (data.error) {
         setError(data.error);
         setLoading(false);

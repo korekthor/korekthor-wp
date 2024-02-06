@@ -67,7 +67,8 @@ const update_dictionaries = (search?: string) => {
 };
 
 const save_and_close = () => {
-  document.getElementById("korekthor-button-idle").textContent = "Ukládám...";
+  const button = document.getElementById("korekthor-button-idle");
+  button.textContent = "Ukládám...";
 
   $.ajax({
     url: ajaxurl,
@@ -76,12 +77,12 @@ const save_and_close = () => {
       action: "korekthor_update_dictionaries",
       dictionaries: state.selected_dictionaries,
     },
-    success: (response) => {
-      console.log("Success", response);
+    success: () => {
       setup_idle_screen();
     },
     error: (error) => {
       console.error("Error", error);
+      button.textContent = "Něco se pokazilo!";
     },
   });
 };

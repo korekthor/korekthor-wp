@@ -14,4 +14,5 @@ declare global {
     dictionaries_error: string;
     dictionaries_selected: string[];
   };
+  var tinyMCE: any;
 }

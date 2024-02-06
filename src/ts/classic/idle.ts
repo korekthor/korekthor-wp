@@ -1,3 +1,4 @@
+import { correct } from "./corrections";
 import { setup_dictionary_screen } from "./dictionary";
 import { apply_template } from "./templates";
 
@@ -9,7 +10,7 @@ export const setup_idle_screen = () => {
   const button_dictionaries = document.getElementById("korekthor-button-dictionaries");
 
   button_start.addEventListener("click", () => {
-    apply_template("korekthor-classic-running", true);
+    correct();
   });
 
   button_dictionaries.addEventListener("click", (e) => {

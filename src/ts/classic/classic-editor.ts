@@ -7,5 +7,4 @@ export const state = {
 
 export const main = () => {
   setup_idle_screen();
-  console.log("Hello from classic editor script!");
 };
