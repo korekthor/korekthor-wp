@@ -3,6 +3,7 @@ import { Button } from "@wordpress/components";
 import { useEffect } from "react";
 import { TextControl } from "@wordpress/components";
 import DictionaryRecord from "./DictionaryRecord";
+import $ from "jquery";
 
 export interface Dictionary {
   id: string;
@@ -11,9 +12,12 @@ export interface Dictionary {
   categories: string[];
 }
 
+declare var ajaxurl: string;
 declare var korekthor_ajax: {
   dictionaries: Dictionary[];
   dictionaries_error: string;
+  dictionaries_selected: string[];
+  update_dictionaries_nonce: string;
 };
 
 interface DictionarySelectProps {
@@ -31,24 +35,22 @@ const DictionarySelect: React.FC<DictionarySelectProps> = ({
     categories: [],
   };
 
+  console.log(korekthor_ajax);
+
   if (!korekthor_ajax.dictionaries.find((d) => d.id === "company")) {
     korekthor_ajax.dictionaries.unshift(companyDictionary);
   }
 
   const [dictionariesOpened, setDictionariesOpened] = React.useState(false);
   const [search, setSearch] = React.useState("");
-  const [states, setStates] = React.useState<{
-    [id: string]: boolean;
-  }>({
-    ...korekthor_ajax.dictionaries.reduce(
-      (acc, dictionary) => ({ ...acc, [dictionary.id]: false }),
-      {}
-    ),
-  });
+  const [selected, setSelected] = React.useState<string[]>(
+    korekthor_ajax.dictionaries_selected || []
+  );
 
   const contentRef = React.useRef<HTMLDivElement>(null);
   const [height, setHeight] = React.useState(0);
   const MAX_HEIGHT = Infinity;
+  const [updated, setUpdated] = React.useState(false);
 
   useEffect(() => {
     if (dictionariesOpened) {
@@ -63,12 +65,31 @@ const DictionarySelect: React.FC<DictionarySelectProps> = ({
   }, [dictionariesOpened, contentRef]);
 
   useEffect(() => {
-    const enabledDictionaries = Object.entries(states)
-      .filter(([, enabled]) => enabled)
-      .map(([id]) => id);
+    onDictionariesChange(selected);
+  }, [selected, onDictionariesChange]);
 
-    onDictionariesChange(enabledDictionaries);
-  }, [states, onDictionariesChange]);
+  const handleUpdateDictionaries = () => {
+    $.post(ajaxurl, {
+      nonce: korekthor_ajax.update_dictionaries_nonce,
+      action: "korekthor_update_dictionaries",
+      contentType: "application/x-www-form-urlencoded;charset=utf-8",
+      dictionaries: selected,
+    }).done((data: any) => {
+      setUpdated(true);
+    });
+  };
+
+  useEffect(() => {
+    if (updated) {
+      const timeout = setTimeout(() => {
+        setUpdated(false);
+      }, 2000);
+
+      return () => {
+        clearTimeout(timeout);
+      };
+    }
+  }, [updated]);
 
   // filtering dictionaries
   const filteredDictionaries = korekthor_ajax.dictionaries.filter(
@@ -98,7 +119,11 @@ const DictionarySelect: React.FC<DictionarySelectProps> = ({
           {dictionariesOpened ? "Skrýt slovníky" : "Zobrazit slovníky"}
         </Button>
 
-        {dictionariesOpened && <Button variant="link">Uložit</Button>}
+        {dictionariesOpened && (
+          <Button onClick={handleUpdateDictionaries} variant="link">
+            {updated ? "Uloženo!" : "Uložit"}
+          </Button>
+        )}
       </div>
 
       <div
@@ -117,10 +142,14 @@ const DictionarySelect: React.FC<DictionarySelectProps> = ({
             <DictionaryRecord
               key={dictionary.id}
               dictionary={dictionary}
-              onChange={(newState) =>
-                setStates({ ...states, [dictionary.id]: newState })
-              }
-              enabled={states[dictionary.id]}
+              onChange={(state) => {
+                setSelected((prev) =>
+                  state
+                    ? [...prev, dictionary.id]
+                    : prev.filter((id) => id !== dictionary.id)
+                );
+              }}
+              enabled={selected.includes(dictionary.id)}
             />
           ))}
           {filteredDictionaries.length === 0 && (
