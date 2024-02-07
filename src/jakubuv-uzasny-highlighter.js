@@ -155,7 +155,7 @@ function setup(element, underlineObjects, window) {
   return [element, underlineWindow, underlineContainer, root.shadowRoot];
 }
 
-function getErrors(data, mistakes) {
+function getErrors(data) {
   const wordsWithErrors = [];
   let errors = [];
   let shifted = 0;
@@ -166,9 +166,6 @@ function getErrors(data, mistakes) {
   let connect_to_result = false;
 
   data.flat().forEach((wordData, indexWord) => {
-    wordData.errors.forEach((error) => {
-      errors.push(mistakes.errors[error.type]);
-    });
     const token = wordData.original_token.token;
     const result = wordData.result;
 
@@ -395,7 +392,7 @@ function makeReturnObject(obj, element, sendObj, setObj) {
 
 const processed_elements = [];
 
-export function main(element, content, mistakes, sendObj) {
+function main(element, content, sendObj) {
   document = element.ownerDocument;
   window = document.defaultView;
 
@@ -541,23 +538,23 @@ export function main(element, content, mistakes, sendObj) {
   }
 }
 
-// document.getElementById("test").addEventListener("click", async () => {
-//   const data = JSON.parse(
-//     '[ [ { "original_token": { "token": "jak", "connect_with_after": false }, "result": "Jako", "connect_with_after": false, "errors": [ { "type": "VELKE_PISMENO", "result": "Jako", "prob": "-1.000" } ] }, { "original_token": { "token": "se", "connect_with_after": false }, "result": "Se", "connect_with_after": false, "errors": [{ "type": "VELKE_PISMENO", "result": "Se", "prob": "-1.000" }] }, { "original_token": { "token": "máš", "connect_with_after": false }, "result": "máš", "connect_with_after": false, "errors": [] } ] ]',
-//   );
-//   const mistakes_res = await fetch("https://korekthor.cz/api/chyby");
-//   const mistakes = await mistakes_res.json();
+document.getElementById("test").addEventListener("click", async () => {
+  const data = JSON.parse(
+    '[ [ { "original_token": { "token": "jak", "connect_with_after": false }, "result": "Jako", "connect_with_after": false, "errors": [ { "type": "VELKE_PISMENO", "result": "Jako", "prob": "-1.000" } ] }, { "original_token": { "token": "se", "connect_with_after": false }, "result": "Se", "connect_with_after": false, "errors": [{ "type": "VELKE_PISMENO", "result": "Se", "prob": "-1.000" }] }, { "original_token": { "token": "máš", "connect_with_after": false }, "result": "máš", "connect_with_after": false, "errors": [] } ] ]',
+  );
+  const mistakes_res = await fetch("https://korekthor.cz/api/chyby");
+  const mistakes = await mistakes_res.json();
 
-//   let obj = {};
-//   const sendObj = (data) => (obj = data);
+  let obj = {};
+  const sendObj = (data) => (obj = data);
 
-//   main(document.getElementById("able"), data, mistakes, sendObj);
+  main(document.getElementById("able"), data, sendObj);
 
-//   window.addEventListener("keydown", (e) => {
-//     if (e.code === "NumpadAdd") {
-//       obj[0].reject();
-//     } else if (e.code === "KeyW") {
-//       console.log(obj);
-//     }
-//   });
-// });
+  window.addEventListener("keydown", (e) => {
+    if (e.code === "NumpadAdd") {
+      obj[0].reject();
+    } else if (e.code === "KeyW") {
+      console.log(obj);
+    }
+  });
+});
