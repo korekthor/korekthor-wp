@@ -4,3 +4,4 @@ wp-data
 /vendor/
 /node_modules/
 /src/assets/*
+!/src/assets/highlight.css
