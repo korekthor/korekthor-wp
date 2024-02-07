@@ -166,6 +166,9 @@ function getErrors(data) {
   let connect_to_result = false;
 
   data.flat().forEach((wordData, indexWord) => {
+    wordData.errors.forEach((error) => {
+            errors.push(error.type)
+    })
     const token = wordData.original_token.token;
     const result = wordData.result;
 
