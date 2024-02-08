@@ -403,11 +403,13 @@ export function runHighlight(element, content, sendObj) {
 
   const setObj = (obj) => (underlineObjects = obj);
 
+  
+  let founded_processed_element = processed_elements.find((el) => el[0] === element);
+
   processed_elements.forEach((el) => {
     if (el[0] !== element) founded_processed_element[2].innerHTML = "";
   });
-
-  let founded_processed_element = processed_elements.find((el) => el[0] === element);
+  
   if (founded_processed_element === undefined) {
     founded_processed_element = setup(element, underlineObjects, elementWindow);
     processed_elements.push(founded_processed_element);
