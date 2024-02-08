@@ -1,5 +1,27 @@
+.korekthor-text-ok {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  padding: 1rem;
+
+  img {
+    margin-bottom: 1rem;
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+}
+
 .korekthor-mistake-list{
   margin: .5rem 0;
+}
+
+.korekthor-classic {
+  .korekthor-mistake {
+  padding: .5rem;
+  border-radius: .3rem;
+  }
 }
 
 .korekthor-mistake {

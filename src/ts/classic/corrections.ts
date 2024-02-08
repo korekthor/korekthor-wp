@@ -1,6 +1,7 @@
+import { ObjectElement, runHighlight } from "../../jakubuv-uzasny-highlighter";
 import { state } from "./classic-editor";
 import { setup_idle_screen } from "./idle";
-import { apply_template } from "./templates";
+import { apply_template, clone_template } from "./templates";
 import $ from "jquery";
 
 const correct_request = (text: string) =>
@@ -21,14 +22,84 @@ const correct_request = (text: string) =>
       });
   });
 
+const setup_ok_screen = () => {
+  apply_template("korekthor-classic-ok", true);
+
+  const link = document.getElementById("korekthor-button-idle");
+  console.log(link);
+  link.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    setup_idle_screen();
+  });
+};
+
+const update_corrections = (data: ObjectElement[]) => {
+  if (data.length === 0) {
+    setup_ok_screen();
+    return;
+  }
+
+  const list = document.getElementById("korekthor-mistake-list");
+  list.innerHTML = "";
+
+  for (const mistake of data) {
+    const fragment = clone_template("korekthor-classic-mistake");
+
+    // setup summary
+    const slashIcon = fragment.querySelector(".korekthor-icon-slash") as HTMLElement;
+    const alertIcon = fragment.querySelector(".korekthor-icon-alert") as HTMLElement;
+    const arrowIcon = fragment.querySelector(".korekthor-icon-arrow") as HTMLElement;
+    const suggestion = fragment.querySelector(".korekthor-mistake-suggestion") as HTMLElement;
+    const original = fragment.querySelector(".korekthor-mistake-original") as HTMLElement;
+
+    if (mistake.error.error.find((error: string) => error === "NEZNAME_SLOVO")) {
+      slashIcon.style.display = "block";
+      suggestion.textContent = "Neznámé slovo";
+    } else if (mistake.error.error.length === 1 && mistake.error.error[0] === "PRILIS_DLOUHE") {
+      alertIcon.style.display = "block";
+      suggestion.textContent = "Tohle se nám nepovedlo zpracovat...";
+    } else {
+      original.textContent = mistake.error.token;
+      original.style.display = "block";
+      arrowIcon.style.display = "block";
+      suggestion.textContent = mistake.error.result;
+    }
+
+    // populate mistake details
+    const details = fragment.querySelector(".korekthor-mistake-details");
+    details.textContent = mistake.error.error.map((e: string) => korekthor_ajax.error_codes[e]).join(",");
+
+    // make buttons work
+    const accept = fragment.querySelector(".korekthor-button-accept");
+    accept.addEventListener("click", () => {
+      mistake.accept();
+    });
+
+    const reject = fragment.querySelector(".korekthor-button-reject");
+    reject.addEventListener("click", () => {
+      mistake.reject();
+    });
+
+    // add to list
+    list.appendChild(fragment);
+  }
+};
+
 const setup_correction_screen = (data: any) => {
-  const { content, main } = apply_template("korekthor-classic-results");
+  if (data.data.data.length === 0) {
+    setup_ok_screen();
+    return;
+  }
 
-  console.log(data);
+  apply_template("korekthor-classic-results", true);
 
-  // do the magic
+  const editor = tinyMCE.activeEditor;
+  const editorElement = editor.getDoc().body;
 
-  main.appendChild(content);
+  console.log(editorElement, data.data.data);
+
+  runHighlight(editorElement, data.data.data, update_corrections);
 };
 
 export const correct = () => {

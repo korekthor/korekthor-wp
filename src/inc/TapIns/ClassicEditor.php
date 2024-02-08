@@ -44,6 +44,7 @@ class ClassicEditor extends BaseController {
   }
 
   public function korekthor_meta_box_html() {
+    $plugin_url = $this->plugin_url;
     return require_once "$this->plugin_path/templates/ClassicEditorMetaBox.php";
   }
 }

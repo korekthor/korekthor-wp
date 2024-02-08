@@ -74,11 +74,53 @@
       </a>
     </div>
   </template>
+
+  <template id="korekthor-classic-ok">
+    <div class="korekthor-text-ok">
+      <img src="
+            <?php echo $plugin_url . "img/check.svg"; ?>
+          " alt="">
+      <p>Text je v pořádku.</p>
+      <a href="#" class="thickbox korekthor-classic-link" id="korekthor-button-idle">
+        Zavřít
+      </a>
+    </div>
+  </template>
+
   <template id="korekthor-classic-results">
-    <div class="korekthor-classic-results">
-      <h1>
-        TODO: Do the magic
-      </h1>
+    <div class="korekthor-classic-results korekthor-classic">
+      <div class="korekthor-mistake-list" id="korekthor-mistake-list">
+        Načítání...
+      </div>
+    </div>
+  </template>
+
+  <template id="korekthor-classic-mistake">
+    <div class="korekthor-mistake">
+      <div class="korekthor-mistake-info">
+        <div class="korekthor-mistake-summary">
+          <img style="display: none;" class="korekthor-icon-slash" src="<?php echo $plugin_url . "img/slash.svg"; ?>" alt="Check icon" />
+          <img style="display: none;" class="korekthor-icon-alert" src="<?php echo $plugin_url . "img/alert-triangle.svg"; ?>" alt="Check icon" />
+
+          <span style="display: none;" class="korekthor-mistake-original"></span>
+          <img style="display: none;" class="korekthor-icon-arrow" src="<?php echo $plugin_url . "img/arrow-right.svg"; ?>" alt="Check icon" />
+          <span class="korekthor-mistake-suggestion"></span>
+
+        </div>
+
+        <div class="korekthor-mistake-details">
+        </div>
+      </div>
+
+      <div class="korekthor-mistake-actions">
+        <button class="korekthor-button-accept" type="button">
+          <img src="<?php echo $plugin_url . "img/check.svg"; ?>" alt="Check icon" />
+        </button>
+
+        <button class="korekthor-button-reject" type="button">
+          <img src="<?php echo $plugin_url . "img/x.svg"; ?>" alt="X icon" />
+        </button>
+      </div>
     </div>
   </template>
 </div>
