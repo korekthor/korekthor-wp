@@ -13,6 +13,7 @@ declare global {
     dictionaries: Dictionary[];
     dictionaries_error: string;
     dictionaries_selected: string[];
+    error_codes: { [key: string]: string };
   };
   var tinyMCE: any;
 }

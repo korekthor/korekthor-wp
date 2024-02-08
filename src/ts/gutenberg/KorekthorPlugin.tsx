@@ -12,6 +12,7 @@ import DictionarySelect from "./dictionary/DictionarySelect";
 import StatusError from "./status/StatusError";
 import { ObjectElement, runHighlight } from "../../jakubuv-uzasny-highlighter";
 import StatusOk from "./status/StatusOk";
+import MistakeList from "./mistakes/MistakeList";
 
 const RichTextToolbarButton = _RichTextToolbarButton as any;
 
@@ -82,7 +83,7 @@ export const KorekthorPlugin = () => {
           ) : error ? (
             <StatusError error={error} />
           ) : corrections.length > 0 ? (
-            <p>render things</p>
+            <MistakeList mistakes={corrections} />
           ) : (
             <StatusOk />
           )}

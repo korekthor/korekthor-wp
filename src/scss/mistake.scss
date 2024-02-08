@@ -1,0 +1,99 @@
+.korekthor-mistake-list{
+  margin: .5rem 0;
+}
+
+.korekthor-mistake {
+  padding: .5rem 1rem;
+  transition: background-color .3s ease;
+
+  &:hover {
+    background-color: #f1f1f1;
+  }
+
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.korekthor-mistake-info {
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+.korekthor-mistake-actions {
+  display: flex;
+
+  button {
+    padding: 0;
+    outline: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    transition: 0.2s;
+    padding: 0.25rem;
+    border-radius: .3rem;
+
+    &:not(:last-child) {
+      margin-right: 0.25rem;
+    }
+
+    img {
+      width: 1.25rem;
+      height: 1.25rem;
+      display: block;
+    }
+
+    &:hover {
+      color: #fff;
+    }
+  }
+
+  .korekthor-button-reject:hover {
+    background-color: rgba(#e74c3c, 0.1);
+  }
+
+  .korekthor-button-accept:hover {
+    background-color: rgba(#27ae60, 0.1);
+  }
+
+  .korekthor-button-reject:active {
+    transform: scale(0.9);
+    background-color: rgba(#e74c3c, 0.2);
+  }
+
+  .korekthor-button-accept:active {
+    transform: scale(0.9);
+    background-color: rgba(#27ae60, 0.2);
+  }
+}
+
+.korekthor-mistake-summary {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  overflow: hidden;
+  margin-right: 1rem;
+
+  .korekthor-mistake-original {
+    color: #e74c3c;
+    text-decoration: line-through;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  img {
+    flex-shrink: 0;
+    width: 16px;
+    color: #777;
+    height: 16px;
+  }
+
+  & > *:not(:last-child) {
+    margin-right: 0.5rem;
+  }
+}
+
+.korekthor-mistake-details{
+  color: #777;
+}
+

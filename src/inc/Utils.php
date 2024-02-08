@@ -49,7 +49,8 @@ class Utils extends BaseController {
         "plugin_url" => $this->plugin_url,
         "dictionaries" => $dictionaries['data'],
         "dictionaries_error" => $dictionaries['error'] ?? null,
-        "dictionaries_selected" => get_user_meta(get_current_user_id(), "korekthor_dictionaries", true)
+        "dictionaries_selected" => get_user_meta(get_current_user_id(), "korekthor_dictionaries", true),
+        "error_codes" => KorekthorApiController::get_error_codes()["errors"],
       ),
     );
   }
