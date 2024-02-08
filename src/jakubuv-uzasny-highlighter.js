@@ -389,9 +389,9 @@ function getCount(word) {
 }
 
 function makeReturnObject(obj, element, sendObj, setObj) {
-  return (data = obj.map((el) => {
+  return obj.map((el) => {
     return new objectElement(el[0], el[1], el[2], obj, element, sendObj, setObj);
-  }));
+  });
 }
 
 const processed_elements = [];
