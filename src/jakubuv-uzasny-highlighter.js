@@ -18,7 +18,7 @@ class Block {
   }
 }
 
-class objectElement {
+export class ObjectElement {
   constructor(error, underlines, range, parent, element, sendParent, setParent) {
     this.error = error;
     this.underlines = underlines;
@@ -48,7 +48,11 @@ class objectElement {
     this.setParent(newParent);
     this.sendParent(makeReturnObject(newParent, this.element, this.sendParent, this.setParent));
 
-    const evn = new Event("input", { bubbles: true, cancelable: true, view: elementWindow });
+    const evn = new Event("input", {
+      bubbles: true,
+      cancelable: true,
+      view: underlineContainer.ownerDocument.defaultView,
+    });
     this.element.dispatchEvent(evn);
   }
 
@@ -390,12 +394,17 @@ function getCount(word) {
 
 function makeReturnObject(obj, element, sendObj, setObj) {
   return obj.map((el) => {
-    return new objectElement(el[0], el[1], el[2], obj, element, sendObj, setObj);
+    return new ObjectElement(el[0], el[1], el[2], obj, element, sendObj, setObj);
   });
 }
 
 const processed_elements = [];
 
+/**
+ * @param {Element} element
+ * @param {string} content
+ * @param {function(Array<ObjectElement>):void} sendObj
+ */
 export function runHighlight(element, content, sendObj) {
   const elementWindow = element.ownerDocument.defaultView;
 
@@ -403,7 +412,6 @@ export function runHighlight(element, content, sendObj) {
 
   const setObj = (obj) => (underlineObjects = obj);
 
-  
   let founded_processed_element = processed_elements.find((el) => el[0] === element);
 
   processed_elements.forEach((el) => {
@@ -442,11 +450,19 @@ export function runHighlight(element, content, sendObj) {
       ro.disconnect();
 
       const errors = getErrors(content);
-
+      console.log(errors);
       underlineObjects = [];
       underlineContainer.innerHTML = "";
 
       const focused = document.activeElement === element;
+
+      const rectTextElement = element.getBoundingClientRect();
+      const rectUnderlineWindow = underlineWindow.getBoundingClientRect();
+      const topWindow = parseInt(elementWindow.getComputedStyle(underlineWindow).top);
+      const leftWindow = parseInt(elementWindow.getComputedStyle(underlineWindow).left);
+
+      underlineWindow.style.top = rectTextElement.y - rectUnderlineWindow.y + topWindow + "px";
+      underlineWindow.style.left = rectTextElement.x - rectUnderlineWindow.x + leftWindow + "px";
 
       errors.forEach((error) => {
         const [underlines, range] = setupError(error, element, underlineContainer, root, elementWindow);

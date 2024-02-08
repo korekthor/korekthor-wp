@@ -10,13 +10,14 @@ import StatusLoading from "./status/StatusLoading";
 import StatusNone from "./status/StatusNone";
 import DictionarySelect from "./dictionary/DictionarySelect";
 import StatusError from "./status/StatusError";
-import { runHighlight } from "../../jakubuv-uzasny-highlighter";
+import { ObjectElement, runHighlight } from "../../jakubuv-uzasny-highlighter";
+import StatusOk from "./status/StatusOk";
 
 const RichTextToolbarButton = _RichTextToolbarButton as any;
 
 export const KorekthorPlugin = () => {
   const [loading, setLoading] = React.useState(false);
-  const [corrections, setCorrections] = React.useState([] as any[]);
+  const [corrections, setCorrections] = React.useState<ObjectElement[] | null>(null);
   const [enabledDictionaries, setEnabledDictionaries] = React.useState([] as string[]);
   const [error, setError] = React.useState("");
 
@@ -24,6 +25,11 @@ export const KorekthorPlugin = () => {
     const { getSelectedBlock } = select("core/block-editor") as any;
     return getSelectedBlock();
   }, []);
+
+  const handleMistakeRerender = (corrections: ObjectElement[]) => {
+    setLoading(false);
+    setCorrections(corrections);
+  };
 
   const handleCorrection = (text: string, element: Element) => {
     dispatch("core/edit-post").openGeneralSidebar("korekthor/korekthor-sidebar");
@@ -45,10 +51,9 @@ export const KorekthorPlugin = () => {
       }
 
       setCorrections(data.data);
-      setLoading(false);
 
       // run highlighter
-      runHighlight(element, data.data.data, (object) => console.log(object));
+      runHighlight(element, data.data.data, handleMistakeRerender);
     });
   };
 
@@ -72,12 +77,14 @@ export const KorekthorPlugin = () => {
         <div className="korekthor-sidebar-plugin">
           {loading ? (
             <StatusLoading />
-          ) : corrections.length == 0 ? (
+          ) : corrections === null ? (
             <StatusNone />
           ) : error ? (
             <StatusError error={error} />
+          ) : corrections.length > 0 ? (
+            <p>render things</p>
           ) : (
-            <h1>TODO: Do the magic</h1>
+            <StatusOk />
           )}
         </div>
 
