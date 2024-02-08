@@ -29,7 +29,6 @@
     "build": "wp-scripts build --output-path=src/assets"
   },
   "dependencies": {
-    "@svgr/webpack": "^8.1.0",
     "@types/wordpress__block-editor": "^11.5.10",
     "@wordpress/block-editor": "^12.18.2",
     "@wordpress/edit-post": "^7.27.2",
