@@ -407,9 +407,9 @@ export function runHighlight(element, content, sendObj) {
   let founded_processed_element = processed_elements.find((el) => el[0] === element);
 
   processed_elements.forEach((el) => {
-    if (el[0] !== element) founded_processed_element[2].innerHTML = "";
+    if (el[0] !== element) el[2].innerHTML = "";
   });
-  
+
   if (founded_processed_element === undefined) {
     founded_processed_element = setup(element, underlineObjects, elementWindow);
     processed_elements.push(founded_processed_element);
