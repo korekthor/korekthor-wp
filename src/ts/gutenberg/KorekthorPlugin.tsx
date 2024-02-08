@@ -10,6 +10,7 @@ import StatusLoading from "./status/StatusLoading";
 import StatusNone from "./status/StatusNone";
 import DictionarySelect from "./dictionary/DictionarySelect";
 import StatusError from "./status/StatusError";
+import { runHighlight } from "../../jakubuv-uzasny-highlighter";
 
 const RichTextToolbarButton = _RichTextToolbarButton as any;
 
@@ -45,6 +46,9 @@ export const KorekthorPlugin = () => {
 
       setCorrections(data.data);
       setLoading(false);
+
+      // run highlighter
+      runHighlight(element, data.data.data, (object) => console.log(object));
     });
   };
 
