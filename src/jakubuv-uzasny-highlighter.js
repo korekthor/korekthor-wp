@@ -29,7 +29,7 @@ export class ObjectElement {
     this.setParent = setParent;
   }
 
-  accept(rerender = false) {
+  accept() {
     const underlineContainer = this.underlines[0].parentElement;
     const elementWindow = underlineContainer.ownerDocument.defaultView
     
@@ -49,7 +49,7 @@ export class ObjectElement {
     this.parent.forEach((object) => {
       if (object[0].id === this.error.id) return;
 
-      if (rerender) {
+      if (object[2].collapsed) {
         const [underlines, range] = setupError(object[0], this.element, underlineContainer, elementWindow)
         newParent.push([object[0], underlines, range]);
       } else {
