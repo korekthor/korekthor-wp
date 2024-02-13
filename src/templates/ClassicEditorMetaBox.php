@@ -6,10 +6,6 @@
   <template id="korekthor-classic-idle">
     <div class="korekthor-classic-idle">
       <p>Není opraven žádný text, pro opravu klikněte na tlačítko "Zkontrolovat článek". To opraví celý obsah tohoto článku.</p>
-      <p>
-        <!-- For better experience -->
-        Pro lepší zkušenost doporučujeme spíše používat blokový editor.
-      </p>
 
       <button type="button" class="button button-primary button-large korekthor-button-fullwidth" id="korekthor-button-check">
         Zkontrolovat článek
