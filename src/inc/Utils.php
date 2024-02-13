@@ -41,13 +41,15 @@ class Utils extends BaseController {
   public function localize_editor_script($name) {
     $dictionaries = KorekthorApiController::get_dictionaries();
 
+    $dictionaries_data = isset($dictionaries['data']) ? $dictionaries['data'] : [];
+
     wp_localize_script(
       $name,
       "korekthor_ajax",
       array(
         "nonce" => AjaxController::$korekthor_nonce,
         "plugin_url" => $this->plugin_url,
-        "dictionaries" => $dictionaries['data'],
+        "dictionaries" => $dictionaries_data,
         "dictionaries_error" => $dictionaries['error'] ?? null,
         "dictionaries_selected" => get_user_meta(get_current_user_id(), "korekthor_dictionaries", true),
         "error_codes" => KorekthorApiController::get_error_codes()["errors"],

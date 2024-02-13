@@ -42,6 +42,9 @@ const update_dictionaries = (search?: string) => {
   const dictionary_list = document.querySelector("#korekthor-classic-dictionaries-list");
   dictionary_list.innerHTML = "";
 
+  if (korekthor_ajax.dictionaries_error)
+    document.getElementById("korekthor-classic-dictionaries-error").textContent = korekthor_ajax.dictionaries_error;
+
   const toProcess = korekthor_ajax.dictionaries.filter((d) => {
     if (!search) return true;
 

@@ -42,6 +42,10 @@
         <input type="text" class="large-text" id="korekthor-classic-dictionaries-search" placeholder="Hledat...">
       </div>
 
+      <div id="korekthor-classic-dictionaries-error">
+
+      </div>
+
       <div id="korekthor-classic-dictionaries-list">
 
       </div>
