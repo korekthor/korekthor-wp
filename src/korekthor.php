@@ -23,7 +23,7 @@ if (file_exists(dirname(__FILE__) . "/vendor/autoload.php")) {
   require_once dirname(__FILE__) . "/vendor/autoload.php";
 }
 
-define("KOREKTHOR_API_URL", "http://10.0.0.100:7000");
+define("KOREKTHOR_API_URL", "http://api.korekthor.cz");
 
 function korekthor_activate() {
   Inc\Base\Activate::activate();
