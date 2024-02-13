@@ -9,11 +9,11 @@
         Přehled
       </a>
     </li>
-    <li>
+    <!-- <li>
       <a href="#updates">
         Aktualizace
       </a>
-    </li>
+    </li> -->
 
     <li>
       <a href="#about">
@@ -72,14 +72,14 @@
       </div>
     </div>
 
-    <div id="updates" class="tab-pane fade">
+    <!-- <div id="updates" class="tab-pane fade">
       <h3>
         Aktualizace
       </h3>
       <p>
         Tady budou aktualizace
       </p>
-    </div>
+    </div> -->
 
     <div id="about" class="tab-pane fade">
       <h3>
