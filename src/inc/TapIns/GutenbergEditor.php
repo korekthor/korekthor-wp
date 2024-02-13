@@ -15,8 +15,6 @@ class GutenbergEditor extends BaseController {
   private $utils;
   public function register() {
     // if the plugin is not active, do not register the hooks
-    if (!get_option("korekthor_enable")) return;
-
     $this->utils = new Utils();
 
     add_action(

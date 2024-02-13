@@ -35,16 +35,6 @@ class Settings extends BaseController {
     $args = [
       [
         "option_group" => "korekthor_options_group",
-        "option_name" => "korekthor_enable",
-        "callback" => [
-          "sanitize_callback" => array($this->fields, "checkbox_sanitize"),
-          "default" => true,
-          "type" => "boolean",
-          "description" => "Povolit korekthor na tomto webu.",
-        ],
-      ],
-      [
-        "option_group" => "korekthor_options_group",
         "option_name" => "korekthor_api_key",
         "callback" => array($this->callbacks, "korekthor_options_group"),
       ],
@@ -78,17 +68,6 @@ class Settings extends BaseController {
           "label_for" => "korekthor_api_key",
           "class" => "example-class",
           "placeholder" => "Tady vložte váš API klíč..."
-        ]
-      ],
-      [
-        "id" => "korekthor_enable",
-        "title" => "Povolit korekthor",
-        "callback" => array($this->fields, "checkbox_field"),
-        "page" => "korekthor_settings",
-        "section" => "korekthor_admin_api",
-        "args" => [
-          "label_for" => "korekthor_enable",
-          "class" => "ui-toggle",
         ]
       ]
     ];
