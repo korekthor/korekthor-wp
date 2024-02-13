@@ -19,47 +19,48 @@ class Block {
 }
 
 export class ObjectElement {
-  constructor(error, underlines, range, parent, element, root, sendParent, setParent) {
+  constructor(error, underlines, range, parent, element, sendParent, setParent) {
     this.error = error;
     this.underlines = underlines;
     this.range = range;
     this.parent = parent;
     this.element = element;
-    this.root = root;
     this.sendParent = sendParent;
     this.setParent = setParent;
   }
 
   accept() {
-    const newParent = [];
-
     const underlineContainer = this.underlines[0].parentElement;
+    const elementWindow = underlineContainer.ownerDocument.defaultView
+    
     underlineContainer.innerHTML = "";
-
-    console.log(this.root);
-
-    const parent = this.parent;
-
+    
     this.range.deleteContents();
-    // this.range.insertNode(underlineContainer.ownerDocument.createTextNode(this.error.result.replaceAll("&nbsp;", " ")));
-
-    parent.forEach((object) => {
-      if (object[0].id === this.error.id) return;
-
-      console.log(object[2]);
-      const newUnderline = fromRangeToUnderline(object[2], object[0].id, underlineContainer);
-      newParent.push([object[0], newUnderline, object[2]]);
-    });
-    console.log(newParent);
-    this.setParent(newParent);
-    this.sendParent(makeReturnObject(newParent, this.element, this.root, this.sendParent, this.setParent));
+    this.range.insertNode(underlineContainer.ownerDocument.createTextNode(this.error.result.replaceAll("&nbsp;", " ")));
 
     const evn = new Event("input", {
       bubbles: true,
       cancelable: true,
-      view: underlineContainer.ownerDocument.defaultView,
+      view: elementWindow,
     });
     this.element.dispatchEvent(evn);
+    
+    const newParent = [];
+    this.parent.forEach((object) => {
+      if (object[0].id === this.error.id) return;
+
+      if (object[2].collapsed) {
+        const [underlines, range] = setupError(object[0], this.element, underlineContainer, elementWindow, false)
+        newParent.push([object[0], underlines, range]);
+      } else {
+        const underlines = fromRangeToUnderline(object[2], object[0].id, underlineContainer, false)
+        newParent.push([object[0], underlines, object[2]]);
+      }
+    });
+
+    this.setParent(newParent);
+    this.sendParent(makeReturnObject(newParent, this.element, this.root, this.sendParent, this.setParent));
+
   }
 
   reject() {
@@ -223,7 +224,7 @@ function getErrors(data) {
   return wordsWithErrors;
 }
 
-function setupError(error, mainElement, underlineContainer, elementWindow) {
+function setupError(error, mainElement, underlineContainer, elementWindow, animate) {
   const [node, offset] = getNode(error.index, mainElement, elementWindow);
   if (!node) return console.log("ERROR: not able to find node");
 
@@ -232,7 +233,7 @@ function setupError(error, mainElement, underlineContainer, elementWindow) {
     count += getCount(word);
   });
 
-  return createUnderline(offset, node, underlineContainer, count, error.id, elementWindow);
+  return createUnderline(offset, node, underlineContainer, count, error.id, elementWindow, animate);
 }
 
 function getNode(index, original, elementWindow) {
@@ -341,7 +342,7 @@ function getBlocks(element, elementWindow) {
   return data;
 }
 
-function fromRangeToUnderline(range, id, container) {
+function fromRangeToUnderline(range, id, container, animate = false) {
   const rects = range.getClientRects();
   const containerRect = container.getBoundingClientRect();
 
@@ -349,7 +350,7 @@ function fromRangeToUnderline(range, id, container) {
 
   for (const rect of rects) {
     const underline = document.createElement("div");
-    underline.classList = "underline";
+    underline.classList = animate ? "underline underline-animate" : "underline";
     underline.style.width = rect.width + "px";
     underline.style.maxWidth = rect.width + "px";
     underline.style.height = rect.height + "px";
@@ -364,7 +365,7 @@ function fromRangeToUnderline(range, id, container) {
   return underlines;
 }
 
-function createUnderline(offset, node, underlineContainer, count, id, elementWindow) {
+function createUnderline(offset, node, underlineContainer, count, id, elementWindow, animate) {
   const sel = elementWindow.getSelection();
 
   // word press needs the same thing twice to do something
@@ -375,7 +376,7 @@ function createUnderline(offset, node, underlineContainer, count, id, elementWin
     sel.modify("extend", "backward", "word");
   }
   const edit_range = sel.getRangeAt(0);
-  const underlines = fromRangeToUnderline(edit_range, id, underlineContainer);
+  const underlines = fromRangeToUnderline(edit_range, id, underlineContainer, animate);
 
   sel.removeAllRanges();
   return [underlines, edit_range];
@@ -400,7 +401,7 @@ function getCount(word) {
 
 function makeReturnObject(obj, element, root, sendObj, setObj) {
   return obj.map((el) => {
-    return new ObjectElement(el[0], el[1], el[2], obj, element, root, sendObj, setObj);
+    return new ObjectElement(el[0], el[1], el[2], obj, element, sendObj, setObj);
   });
 }
 
@@ -433,14 +434,27 @@ export function runHighlight(element, content, sendObj) {
     const roEl = new ResizeObserver((entry) => {
       if (!first) {
         setDimensions(element, underlineWindow, elementWindow);
+        const rectTextElement = element.getBoundingClientRect();
+        const rectUnderlineWindow = underlineWindow.getBoundingClientRect();
+        const topWindow = parseInt(elementWindow.getComputedStyle(underlineWindow).top);
+        const leftWindow = parseInt(elementWindow.getComputedStyle(underlineWindow).left);
+  
+        underlineWindow.style.top = rectTextElement.y - rectUnderlineWindow.y + topWindow + "px";
+        underlineWindow.style.left = rectTextElement.x - rectUnderlineWindow.x + leftWindow + "px";
       }
       first = false;
 
       underlineContainer.innerHTML = "";
 
+      const newUnderlineObjects = []
+
       underlineObjects.forEach((object) => {
-        fromRangeToUnderline(object[2], object[0].id, underlineContainer);
+        const underlines = fromRangeToUnderline(object[2], object[0].id, underlineContainer, false);
+        newUnderlineObjects.push([object[0], underlines, object[2]]);
       });
+
+      underlineObjects = newUnderlineObjects
+      sendObj(makeReturnObject(underlineObjects, element, root, sendObj, setObj))
     });
 
     roEl.observe(element);
@@ -456,7 +470,6 @@ export function runHighlight(element, content, sendObj) {
       ro.disconnect();
 
       const errors = getErrors(content);
-      console.log(errors);
       underlineObjects = [];
       underlineContainer.innerHTML = "";
 
@@ -471,14 +484,13 @@ export function runHighlight(element, content, sendObj) {
       underlineWindow.style.left = rectTextElement.x - rectUnderlineWindow.x + leftWindow + "px";
 
       errors.forEach((error) => {
-        const [underlines, range] = setupError(error, element, underlineContainer, elementWindow);
+        const [underlines, range] = setupError(error, element, underlineContainer, elementWindow, true);
         underlineObjects.push([error, underlines, range]);
       });
 
       if (!focused) element.blur();
 
       console.log("done");
-      console.log(underlineObjects, errors);
       sendObj(makeReturnObject(underlineObjects, element, root, sendObj, setObj));
     }
   });
@@ -493,7 +505,6 @@ export function runHighlight(element, content, sendObj) {
       return;
     }
 
-    console.log(111);
     const rectTextElement = element.getBoundingClientRect();
     const rectUnderlineWindow = underlineWindow.getBoundingClientRect();
     const topWindow = parseInt(elementWindow.getComputedStyle(underlineWindow).top);
@@ -541,8 +552,6 @@ export function runHighlight(element, content, sendObj) {
     for (let i = 0; i < sel.rangeCount; ++i) allRangesBefore.push(sel.getRangeAt(i));
     sel.removeAllRanges();
 
-    console.log(underlineObjects);
-
     underlineObjects.forEach((object) => {
       const error = object[0];
       let index = error.index;
@@ -554,7 +563,7 @@ export function runHighlight(element, content, sendObj) {
       } else if (index > same_before - 1) return;
 
       error.index = index;
-      const [underlines, range] = setupError(error, element, underlineContainer, elementWindow);
+      const [underlines, range] = setupError(error, element, underlineContainer, elementWindow, false);
       newUnderlineObjects.push([error, underlines, range]);
     });
     underlineObjects = newUnderlineObjects;
