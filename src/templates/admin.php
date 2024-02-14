@@ -86,7 +86,19 @@
         O projektu
       </h3>
       <p>
-        Tady bude popis projektu
+        Korekthor pro WordPress je plugin, který umožňuje propojení vašeho webu s Korekthorem. Ale co je Korekthor?
+      </p>
+
+      <h4>
+        Nejpokročilejší oprava českého textu
+      </h4>
+
+      <p>
+        Korekthor je platforma pro opravu českého textu. Využíváme neuronové sítě, abychom mohli nabídnout mnohem komplexnější opravy než jakýkoliv jiný nástroj. Jsme schopní pracovat s kontextem věty a najít tak mnohem více chyb.
+      </p>
+
+      <p>
+        <a href="https://korekthor.cz/o-projektu">Více informací o nás naleznete zde.</a>
       </p>
     </div>
   </div>
