@@ -435,10 +435,10 @@ function makeReturnObject(obj, element, root, sendObj, setObj) {
       cancelable: true,
       view: elementWindow,
     });
-    this.element.dispatchEvent(evn);
+    element.element.dispatchEvent(evn);
         
-    this.setParent([]);
-    this.sendParent(...makeReturnObject([], element.element, element.root, element.sendParent, element.setParent));
+    element.setParent([]);
+    element.sendParent(...makeReturnObject([], element.element, element.root, element.sendParent, element.setParent));
   }
 
   function reject_all() {
@@ -447,8 +447,8 @@ function makeReturnObject(obj, element, root, sendObj, setObj) {
     
     underlineContainer.innerHTML = ""
         
-    this.setParent([]);
-    this.sendParent(...makeReturnObject([], element.element, element.root, element.sendParent, element.setParent));
+    element.setParent([]);
+    element.sendParent(...makeReturnObject([], element.element, element.root, element.sendParent, element.setParent));
   }
 
   return [objects, correct_all, reject_all]
