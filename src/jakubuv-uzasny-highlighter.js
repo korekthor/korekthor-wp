@@ -414,9 +414,49 @@ function getCount(word) {
 }
 
 function makeReturnObject(obj, element, root, sendObj, setObj) {
-  return obj.map((el) => {
+  const objects = obj.map((el) => {
     return new ObjectElement(el[0], el[1], el[2], obj, element, sendObj, setObj);
   });
+
+  function correct_all() {
+    const element = objects[0]
+    const underlineContainer = element.underlines[0].parentElement;
+    const elementWindow = underlineContainer.ownerDocument.defaultView
+    
+    underlineContainer.innerHTML = ""
+
+    objects.forEach(el => {
+      el.range.deleteContents();
+      el.range.insertNode(underlineContainer.ownerDocument.createTextNode(this.error.result.replaceAll("&nbsp;", " ")));
+    })
+
+    const evn = new Event("input", {
+      bubbles: true,
+      cancelable: true,
+      view: elementWindow,
+    });
+    this.element.dispatchEvent(evn);
+        
+    this.setParent([]);
+    this.sendParent(makeReturnObject([], element.element, element.root, element.sendParent, element.setParent));
+  }
+
+  function reject_all() {
+    const element = objects[0]
+    const underlineContainer = element.underlines[0].parentElement;
+    
+    underlineContainer.innerHTML = ""
+        
+    this.setParent([]);
+    this.sendParent(makeReturnObject([], element.element, element.root, element.sendParent, element.setParent));
+  }
+
+  const data = {
+    elements: objects,
+    correct_all: correct_all,
+    reject_all: reject_all
+  }
+  return data
 }
 
 const processed_elements = [];
