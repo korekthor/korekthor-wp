@@ -22,14 +22,24 @@ export const KorekthorPlugin = () => {
   const [enabledDictionaries, setEnabledDictionaries] = React.useState([] as string[]);
   const [error, setError] = React.useState("");
 
+  const actionsRef = React.useRef<{
+    acceptAll: () => void;
+    rejectAll: () => void;
+  }>(null);
+
   const selectedBlock = useSelect((select) => {
     const { getSelectedBlock } = select("core/block-editor") as any;
     return getSelectedBlock();
   }, []);
 
-  const handleMistakeRerender = (corrections: ObjectElement[]) => {
+  const handleMistakeRerender = (corrections: ObjectElement[], acceptAll: () => void, rejectAll: () => void) => {
     setLoading(false);
     setCorrections(corrections);
+
+    actionsRef.current = {
+      acceptAll,
+      rejectAll,
+    };
   };
 
   const handleCorrection = (text: string, element: Element) => {
@@ -94,7 +104,11 @@ export const KorekthorPlugin = () => {
           ) : error ? (
             <StatusError error={error} />
           ) : corrections.length > 0 ? (
-            <MistakeList mistakes={corrections} />
+            <MistakeList
+              mistakes={corrections}
+              acceptAll={() => actionsRef.current.acceptAll()}
+              rejectAll={() => actionsRef.current.rejectAll()}
+            />
           ) : (
             <StatusOk />
           )}
