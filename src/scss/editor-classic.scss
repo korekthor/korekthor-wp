@@ -52,3 +52,12 @@
   max-height: calc(100vh - 300px);
   overflow-y: auto;
 }
+
+.korekthor-classic-buttons{
+  margin-bottom: .5rem;
+  position: sticky;
+
+  &>*:not(:last-child){
+    margin-bottom: .5rem;
+  }
+}

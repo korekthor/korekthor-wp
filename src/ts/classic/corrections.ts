@@ -35,7 +35,7 @@ const setup_ok_screen = () => {
   });
 };
 
-const update_corrections = (data: ObjectElement[]) => {
+const update_corrections = (data: ObjectElement[], correct_all: () => void, reject_all: () => void) => {
   console.log(data.length, data);
   if (data.length === 0) {
     console.log("udpate_correction length 0 has been triggered");
@@ -48,6 +48,29 @@ const update_corrections = (data: ObjectElement[]) => {
 
   const list = document.getElementById("korekthor-mistake-list");
   list.innerHTML = "";
+
+  const buttonsFragment = clone_template("korekthor-classic-buttons");
+
+  const accept_all_button = buttonsFragment.querySelector("#korekthor-button-accept-all");
+  const reject_all_button = buttonsFragment.querySelector("#korekthor-button-reject-all");
+
+  accept_all_button.addEventListener("click", (e) => {
+    e.preventDefault();
+    correct_all();
+
+    // got back
+    setup_ok_screen();
+  });
+
+  reject_all_button.addEventListener("click", (e) => {
+    e.preventDefault();
+    reject_all();
+
+    // got back
+    setup_idle_screen();
+  });
+
+  list.appendChild(buttonsFragment);
 
   for (const mistake of data) {
     const fragment = clone_template("korekthor-classic-mistake");

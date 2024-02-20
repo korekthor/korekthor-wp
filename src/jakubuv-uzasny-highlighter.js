@@ -419,16 +419,16 @@ function makeReturnObject(obj, element, root, sendObj, setObj) {
   });
 
   function correct_all() {
-    const element = objects[0]
+    const element = objects[0];
     const underlineContainer = element.underlines[0].parentElement;
-    const elementWindow = underlineContainer.ownerDocument.defaultView
-    
-    underlineContainer.innerHTML = ""
+    const elementWindow = underlineContainer.ownerDocument.defaultView;
 
-    objects.forEach(el => {
+    underlineContainer.innerHTML = "";
+
+    objects.forEach((el) => {
       el.range.deleteContents();
       el.range.insertNode(underlineContainer.ownerDocument.createTextNode(el.error.result.replaceAll("&nbsp;", " ")));
-    })
+    });
 
     const evn = new Event("input", {
       bubbles: true,
@@ -436,22 +436,22 @@ function makeReturnObject(obj, element, root, sendObj, setObj) {
       view: elementWindow,
     });
     element.element.dispatchEvent(evn);
-        
+
     element.setParent([]);
     element.sendParent(...makeReturnObject([], element.element, element.root, element.sendParent, element.setParent));
   }
 
   function reject_all() {
-    const element = objects[0]
+    const element = objects[0];
     const underlineContainer = element.underlines[0].parentElement;
-    
-    underlineContainer.innerHTML = ""
-        
+
+    underlineContainer.innerHTML = "";
+
     element.setParent([]);
     element.sendParent(...makeReturnObject([], element.element, element.root, element.sendParent, element.setParent));
   }
 
-  return [objects, correct_all, reject_all]
+  return [objects, correct_all, reject_all];
 }
 
 const processed_elements = [];
@@ -459,7 +459,7 @@ const processed_elements = [];
 /**
  * @param {Element} element
  * @param {string} content
- * @param {function(Array<ObjectElement>):void} sendObj
+ * @param {function(Array<ObjectElement>, function():void, function():void):void} sendObj
  */
 export function runHighlight(element, content, sendObj) {
   const elementWindow = element.ownerDocument.defaultView;

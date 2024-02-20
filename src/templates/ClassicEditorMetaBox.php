@@ -95,6 +95,18 @@
     </div>
   </template>
 
+  <template id="korekthor-classic-buttons">
+    <div class="korekthor-classic-buttons">
+      <button type="button" class="button button-primary button-large korekthor-button-fullwidth" id="korekthor-button-accept-all">
+        Přijmout všechny návrhy
+      </button>
+
+      <button type="button" class="button button-secondary button-large korekthor-button-fullwidth" id="korekthor-button-reject-all">
+        Odmítnout všechny návrhy
+      </button>
+    </div>
+  </template>
+
   <template id="korekthor-classic-mistake">
     <div class="korekthor-mistake">
       <div class="korekthor-mistake-info">
