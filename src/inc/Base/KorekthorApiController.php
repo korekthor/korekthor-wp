@@ -82,6 +82,7 @@ class KorekthorApiController {
         "Content-Type" => "application/json",
       ],
       "body" => $encoded_body,
+      "timeout" => 600,
     ]);
 
     $status = wp_remote_retrieve_response_code($response);
