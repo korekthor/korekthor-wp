@@ -16,4 +16,6 @@ declare global {
     error_codes: { [key: string]: string };
   };
   var tinyMCE: any;
+
+  var chrome: any;
 }

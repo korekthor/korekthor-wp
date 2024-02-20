@@ -21,6 +21,17 @@ const onWindowLoad = () => {
   links.forEach((link) => {
     link.addEventListener("click", (ev) => switchTab(link, ev));
   });
+
+  if (!chrome) return;
+  chrome.runtime.sendMessage(
+    "iflnpimjdepojmgnbmgopdcbmbclcgbf",
+    {
+      type: "turnoff",
+    },
+    (response: any) => {
+      console.log(response);
+    },
+  );
 };
 
 window.addEventListener("load", onWindowLoad);
