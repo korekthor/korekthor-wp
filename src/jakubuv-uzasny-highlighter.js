@@ -76,6 +76,18 @@ export class ObjectElement {
       underlineContainer.removeChild(underline);
     }
   }
+
+  highlight() {
+    this.underlines.forEach(el => {
+      un.classList.add('underline-highlight')
+    })
+  }
+  
+  unhighlight() {
+    this.underlines.forEach(el => {
+      un.classList.remove('underline-highlight')
+    })
+  }
 }
 
 window.customElements.define("korekthor-underlines", KorekthorMain);

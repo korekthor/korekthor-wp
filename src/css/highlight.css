@@ -38,6 +38,11 @@ trying to fix not apllying outside css on extension
     display: inline-block;
     background-color: #e74d3c6d;
     border-radius: 1.5px;
+    transition: background-color 0.1s linear;
+}
+
+.underline-highlight {
+    background-color: #e74d3cd0;
 }
 
 .underline-animate {
