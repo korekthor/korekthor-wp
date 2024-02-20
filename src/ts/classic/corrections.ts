@@ -23,6 +23,7 @@ const correct_request = (text: string) =>
   });
 
 const setup_ok_screen = () => {
+  console.log("Setting up OK screen for some reason");
   apply_template("korekthor-classic-ok", true);
 
   const link = document.getElementById("korekthor-button-idle");
@@ -35,9 +36,14 @@ const setup_ok_screen = () => {
 };
 
 const update_corrections = (data: ObjectElement[]) => {
+  console.log(data.length, data);
   if (data.length === 0) {
+    console.log("udpate_correction length 0 has been triggered");
     setup_ok_screen();
     return;
+  } else {
+    // apply results template, it might have been overwritten by OK screen
+    apply_template("korekthor-classic-results", true);
   }
 
   const list = document.getElementById("korekthor-mistake-list");
@@ -89,6 +95,7 @@ const update_corrections = (data: ObjectElement[]) => {
 const setup_correction_screen = (data: any) => {
   if (data.data.data.length === 0) {
     setup_ok_screen();
+    console.log("setup_correction_screen length 0 has been triggered");
     return;
   }
 

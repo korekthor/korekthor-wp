@@ -63,7 +63,17 @@ export const KorekthorPlugin = () => {
 
     const wpIframe = document.querySelector("iframe[name='editor-canvas']") as HTMLIFrameElement;
 
-    const blockElement = wpIframe.contentWindow.document.querySelector(query);
+    let blockElement = wpIframe?.contentWindow.document.querySelector(query);
+
+    if (!blockElement) {
+      blockElement = document.querySelector(query);
+    }
+
+    if (!blockElement) {
+      setError("Nepodařilo se najít blok. Napište nám prosím na info@korekthor.cz a my se vám pokusíme pomoci.");
+      return;
+    }
+
     const text = selectedBlock.attributes.content;
 
     handleCorrection(text, blockElement);

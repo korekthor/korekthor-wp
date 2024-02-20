@@ -63,7 +63,7 @@
   </template>
   <template id="korekthor-classic-error">
     <div class="korekthor-classic-error">
-      <p>Došlo k chybě při načítání slovníků. <br />Detail chyby:</p>
+      <p>Došlo k chybě při opravování textu. <br />Detail chyby:</p>
 
       <p>
       <pre id="korekthor-error-detail"></pre>
