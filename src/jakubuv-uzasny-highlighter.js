@@ -427,7 +427,7 @@ function makeReturnObject(obj, element, root, sendObj, setObj) {
 
     objects.forEach(el => {
       el.range.deleteContents();
-      el.range.insertNode(underlineContainer.ownerDocument.createTextNode(this.error.result.replaceAll("&nbsp;", " ")));
+      el.range.insertNode(underlineContainer.ownerDocument.createTextNode(el.error.result.replaceAll("&nbsp;", " ")));
     })
 
     const evn = new Event("input", {
