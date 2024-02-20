@@ -47,3 +47,8 @@
     background-color: #f1f1f1;
   }
 }
+
+.korekthor-classic-results {
+  max-height: calc(100vh - 300px);
+  overflow-y: auto;
+}

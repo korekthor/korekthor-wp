@@ -6,6 +6,6 @@ cp readme.txt subversion/trunk
 echo "Creating a zip file"
 cd subversion
 cp -r trunk/ korekthor
-zip -vr korekthor.zip korekthor
+zip -vr korekthor-wp.zip korekthor
 rm -rf korekthor
-mv korekthor.zip ../
+mv korekthor-wp.zip ../

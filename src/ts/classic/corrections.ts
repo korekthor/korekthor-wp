@@ -87,6 +87,17 @@ const update_corrections = (data: ObjectElement[]) => {
       mistake.reject();
     });
 
+    const wrapper_div = fragment.querySelector(".korekthor-mistake") as HTMLElement;
+
+    wrapper_div.addEventListener("mouseenter", () => {
+      mistake.highlight();
+    });
+
+    wrapper_div.addEventListener("mouseleave", () => {
+      console.log("unhighlighting");
+      mistake.unhighlight();
+    });
+
     // add to list
     list.appendChild(fragment);
   }

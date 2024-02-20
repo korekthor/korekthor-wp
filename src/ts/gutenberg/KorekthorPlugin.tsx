@@ -74,7 +74,8 @@ export const KorekthorPlugin = () => {
       return;
     }
 
-    const text = selectedBlock.attributes.content;
+    // get text content of selected block
+    const text = blockElement.textContent;
 
     handleCorrection(text, blockElement);
   };

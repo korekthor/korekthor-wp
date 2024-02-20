@@ -31,10 +31,10 @@ export class ObjectElement {
 
   accept() {
     const underlineContainer = this.underlines[0].parentElement;
-    const elementWindow = underlineContainer.ownerDocument.defaultView
-    
+    const elementWindow = underlineContainer.ownerDocument.defaultView;
+
     underlineContainer.innerHTML = "";
-    
+
     this.range.deleteContents();
     this.range.insertNode(underlineContainer.ownerDocument.createTextNode(this.error.result.replaceAll("&nbsp;", " ")));
 
@@ -44,23 +44,22 @@ export class ObjectElement {
       view: elementWindow,
     });
     this.element.dispatchEvent(evn);
-    
+
     const newParent = [];
     this.parent.forEach((object) => {
       if (object[0].id === this.error.id) return;
 
       if (object[2].collapsed) {
-        const [underlines, range] = setupError(object[0], this.element, underlineContainer, elementWindow, false)
+        const [underlines, range] = setupError(object[0], this.element, underlineContainer, elementWindow, false);
         newParent.push([object[0], underlines, range]);
       } else {
-        const underlines = fromRangeToUnderline(object[2], object[0].id, underlineContainer, false)
+        const underlines = fromRangeToUnderline(object[2], object[0].id, underlineContainer, false);
         newParent.push([object[0], underlines, object[2]]);
       }
     });
 
     this.setParent(newParent);
     this.sendParent(makeReturnObject(newParent, this.element, this.root, this.sendParent, this.setParent));
-
   }
 
   reject() {
@@ -78,15 +77,15 @@ export class ObjectElement {
   }
 
   highlight() {
-    this.underlines.forEach(el => {
-      un.classList.add('underline-highlight')
-    })
+    this.underlines.forEach((el) => {
+      el.classList.add("underline-highlight");
+    });
   }
-  
+
   unhighlight() {
-    this.underlines.forEach(el => {
-      un.classList.remove('underline-highlight')
-    })
+    this.underlines.forEach((el) => {
+      el.classList.remove("underline-highlight");
+    });
   }
 }
 
@@ -188,7 +187,7 @@ function getErrors(data) {
   let connect_to_token = false;
   let connect_to_result = false;
 
-  let index = -1
+  let index = -1;
   data.flat().forEach((wordData, indexWord) => {
     wordData.errors.forEach((error) => {
       errors.push(error.type);
@@ -196,7 +195,7 @@ function getErrors(data) {
 
     const token = wordData.original_token.token;
     const result = wordData.result;
-    const wordCount = token.trim().split(' ').length
+    const wordCount = token.trim().split(" ").length;
 
     const ends_non_breaking = token.slice(-6) === "&nbsp;";
 
@@ -214,9 +213,9 @@ function getErrors(data) {
       oneResult += result;
     }
 
-    if (connect_to_token) shifted += wordCount
-    index += wordCount
-    
+    if (connect_to_token) shifted += wordCount;
+    index += wordCount;
+
     if (!token_con && !result_con && errors.length > 0) {
       wordsWithErrors.push({
         index: index - shifted,
@@ -400,7 +399,7 @@ function createUnderline(offset, node, underlineContainer, count, id, elementWin
 function getCount(word) {
   let count = 0;
   let create_new = false;
-  const inter = ["?", ",", ".", "!", ":", "-", "+", "(", ")", "[", "]", "{", "}", "#", '"', "*", ">", "<", ';'];
+  const inter = ["?", ",", ".", "!", ":", "-", "+", "(", ")", "[", "]", "{", "}", "#", '"', "*", ">", "<", ";"];
   const splitWord = word.split("");
 
   splitWord.forEach((el, i) => {
@@ -453,7 +452,7 @@ export function runHighlight(element, content, sendObj) {
         const rectUnderlineWindow = underlineWindow.getBoundingClientRect();
         const topWindow = parseInt(elementWindow.getComputedStyle(underlineWindow).top);
         const leftWindow = parseInt(elementWindow.getComputedStyle(underlineWindow).left);
-  
+
         underlineWindow.style.top = rectTextElement.y - rectUnderlineWindow.y + topWindow + "px";
         underlineWindow.style.left = rectTextElement.x - rectUnderlineWindow.x + leftWindow + "px";
       }
@@ -461,15 +460,15 @@ export function runHighlight(element, content, sendObj) {
 
       underlineContainer.innerHTML = "";
 
-      const newUnderlineObjects = []
+      const newUnderlineObjects = [];
 
       underlineObjects.forEach((object) => {
         const underlines = fromRangeToUnderline(object[2], object[0].id, underlineContainer, false);
         newUnderlineObjects.push([object[0], underlines, object[2]]);
       });
 
-      underlineObjects = newUnderlineObjects
-      sendObj(makeReturnObject(underlineObjects, element, root, sendObj, setObj))
+      underlineObjects = newUnderlineObjects;
+      sendObj(makeReturnObject(underlineObjects, element, root, sendObj, setObj));
     });
 
     roEl.observe(element);

@@ -19,7 +19,11 @@ const MistakeItem: React.FC<MistakeItemProps> = ({ mistake }) => {
   const error = mistake.error as MistakeError;
 
   return (
-    <div className="korekthor-mistake">
+    <div
+      className="korekthor-mistake"
+      onMouseEnter={() => mistake.highlight()}
+      onMouseLeave={() => mistake.unhighlight()}
+    >
       <div className="korekthor-mistake-info">
         <div className="korekthor-mistake-summary">
           <MistakeText mistake={error} />
