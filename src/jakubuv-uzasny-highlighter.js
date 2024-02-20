@@ -176,6 +176,7 @@ function getErrors(data) {
   let connect_to_token = false;
   let connect_to_result = false;
 
+  let index = -1
   data.flat().forEach((wordData, indexWord) => {
     wordData.errors.forEach((error) => {
       errors.push(error.type);
@@ -183,6 +184,7 @@ function getErrors(data) {
 
     const token = wordData.original_token.token;
     const result = wordData.result;
+    const wordCount = token.trim().split(' ').length
 
     const ends_non_breaking = token.slice(-6) === "&nbsp;";
 
@@ -200,11 +202,12 @@ function getErrors(data) {
       oneResult += result;
     }
 
-    if (connect_to_token) ++shifted;
-
+    if (connect_to_token) shifted += wordCount
+    index += wordCount
+    
     if (!token_con && !result_con && errors.length > 0) {
       wordsWithErrors.push({
-        index: indexWord - shifted,
+        index: index - shifted,
         token: oneToken.trim(),
         result: oneResult.trim(),
         error: errors,
@@ -385,7 +388,7 @@ function createUnderline(offset, node, underlineContainer, count, id, elementWin
 function getCount(word) {
   let count = 0;
   let create_new = false;
-  const inter = ["?", ",", ".", "!", ":", "-", "+", "(", ")", "[", "]", "{", "}", "#", '"', "*", ">", "<"];
+  const inter = ["?", ",", ".", "!", ":", "-", "+", "(", ")", "[", "]", "{", "}", "#", '"', "*", ">", "<", ';'];
   const splitWord = word.split("");
 
   splitWord.forEach((el, i) => {
