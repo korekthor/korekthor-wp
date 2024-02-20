@@ -59,14 +59,14 @@ export class ObjectElement {
     });
 
     this.setParent(newParent);
-    this.sendParent(makeReturnObject(newParent, this.element, this.root, this.sendParent, this.setParent));
+    this.sendParent(...makeReturnObject(newParent, this.element, this.root, this.sendParent, this.setParent));
   }
 
   reject() {
     const newParent = this.parent.filter((el) => el[0].id !== this.error.id);
 
     this.setParent(newParent);
-    this.sendParent(makeReturnObject(newParent, this.element, this.root, this.sendParent, this.setParent));
+    this.sendParent(...makeReturnObject(newParent, this.element, this.root, this.sendParent, this.setParent));
 
     const underlineContainer = this.underlines[0].parentElement;
     const toDelete = underlineContainer.querySelectorAll(`*[data-id='${this.error.id}']`);
@@ -414,9 +414,44 @@ function getCount(word) {
 }
 
 function makeReturnObject(obj, element, root, sendObj, setObj) {
-  return obj.map((el) => {
+  const objects = obj.map((el) => {
     return new ObjectElement(el[0], el[1], el[2], obj, element, sendObj, setObj);
   });
+
+  function correct_all() {
+    const element = objects[0]
+    const underlineContainer = element.underlines[0].parentElement;
+    const elementWindow = underlineContainer.ownerDocument.defaultView
+    
+    underlineContainer.innerHTML = ""
+
+    objects.forEach(el => {
+      el.range.deleteContents();
+      el.range.insertNode(underlineContainer.ownerDocument.createTextNode(this.error.result.replaceAll("&nbsp;", " ")));
+    })
+
+    const evn = new Event("input", {
+      bubbles: true,
+      cancelable: true,
+      view: elementWindow,
+    });
+    this.element.dispatchEvent(evn);
+        
+    this.setParent([]);
+    this.sendParent(...makeReturnObject([], element.element, element.root, element.sendParent, element.setParent));
+  }
+
+  function reject_all() {
+    const element = objects[0]
+    const underlineContainer = element.underlines[0].parentElement;
+    
+    underlineContainer.innerHTML = ""
+        
+    this.setParent([]);
+    this.sendParent(...makeReturnObject([], element.element, element.root, element.sendParent, element.setParent));
+  }
+
+  return [objects, correct_all, reject_all]
 }
 
 const processed_elements = [];
@@ -468,7 +503,7 @@ export function runHighlight(element, content, sendObj) {
       });
 
       underlineObjects = newUnderlineObjects;
-      sendObj(makeReturnObject(underlineObjects, element, root, sendObj, setObj));
+      sendObj(...makeReturnObject(underlineObjects, element, root, sendObj, setObj));
     });
 
     roEl.observe(element);
@@ -505,7 +540,7 @@ export function runHighlight(element, content, sendObj) {
       if (!focused) element.blur();
 
       console.log("done");
-      sendObj(makeReturnObject(underlineObjects, element, root, sendObj, setObj));
+      sendObj(...makeReturnObject(underlineObjects, element, root, sendObj, setObj));
     }
   });
   ro.observe(underlineContainer);
@@ -581,7 +616,7 @@ export function runHighlight(element, content, sendObj) {
       newUnderlineObjects.push([error, underlines, range]);
     });
     underlineObjects = newUnderlineObjects;
-    sendObj(makeReturnObject(underlineObjects, element, root, sendObj, setObj));
+    sendObj(...makeReturnObject(underlineObjects, element, root, sendObj, setObj));
 
     allRangesBefore.forEach((ran) => {
       sel.addRange(ran);
