@@ -1,4 +1,4 @@
-import { ObjectElement, runHighlight } from "../../jakubuv-uzasny-highlighter";
+import { ObjectElement, getText, runHighlight } from "../../jakubuv-uzasny-highlighter";
 import { state } from "./classic-editor";
 import { setup_idle_screen } from "./idle";
 import { apply_template, clone_template } from "./templates";
@@ -147,9 +147,10 @@ export const correct = () => {
   if (!tinyMCE) throw new Error("tinyMCE is not defined!");
   apply_template("korekthor-classic-running", true);
 
-  const content = tinyMCE.activeEditor.getContent({
-    format: "text",
-  });
+  const editor = tinyMCE.activeEditor;
+  const editorElement = editor.getDoc().body;
+
+  const content = getText(editorElement);
 
   correct_request(content)
     .then((data: any) => {

@@ -22,6 +22,7 @@ const onWindowLoad = () => {
     link.addEventListener("click", (ev) => switchTab(link, ev));
   });
 
+  return;
   if (!chrome) return;
   chrome.runtime.sendMessage(
     "iflnpimjdepojmgnbmgopdcbmbclcgbf",

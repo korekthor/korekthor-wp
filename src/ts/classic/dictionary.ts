@@ -79,6 +79,7 @@ const save_and_close = () => {
     data: {
       action: "korekthor_update_dictionaries",
       dictionaries: state.selected_dictionaries,
+      nonce: korekthor_ajax.nonce,
     },
     success: () => {
       setup_idle_screen();
