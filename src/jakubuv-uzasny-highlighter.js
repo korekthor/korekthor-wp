@@ -462,6 +462,25 @@ const processed_elements = [];
  * @param {string} content
  * @param {function(Array<ObjectElement>, function():void, function():void):void} sendObj
  */
+
+export function getText(element) {
+  const blocks = getBlocks(element, element.ownerDocument.defaultView) // get all nodes (blocks) that are text nodes
+  let text = ''
+  // adding text together and adds new paragraph if element is block element
+  blocks.forEach((block) => { 
+      text += block.content
+
+      if (block.node.parentElement !== textElement && getComputedStyle(block.node.parentElement).display === 'block'
+      || block.node.parentElement.nextSibling?.nodeName === 'BR') {
+          text += '\n'
+      }
+  })
+
+  text = text.replace(/ +/g, ' ').trim()
+
+  return text
+}
+
 export function runHighlight(element, content, sendObj) {
   const elementWindow = element.ownerDocument.defaultView;
 
