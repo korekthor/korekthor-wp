@@ -470,7 +470,7 @@ export function getText(element) {
   blocks.forEach((block) => { 
       text += block.content
 
-      if (block.node.parentElement !== textElement && getComputedStyle(block.node.parentElement).display === 'block'
+      if (block.node.parentElement !== element && getComputedStyle(block.node.parentElement).display === 'block'
       || block.node.parentElement.nextSibling?.nodeName === 'BR') {
           text += '\n'
       }
