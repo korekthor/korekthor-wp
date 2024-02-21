@@ -21,9 +21,7 @@ class AjaxController {
   }
 
   public function update_dictionaries() {
-    var_dump($_POST);
     check_ajax_referer("korekthor_req", "nonce");
-    echo ("here");
 
     $dictionaries = $_POST["dictionaries"];
 
