@@ -399,7 +399,7 @@ function createUnderline(offset, node, underlineContainer, count, id, elementWin
 function getCount(word) {
   let count = 0;
   let create_new = false;
-  const inter = ["?", ",", ".", "!", ":", "-", "+", "(", ")", "[", "]", "{", "}", "#", '"', "*", ">", "<", ";"];
+  const inter =['?', ',', '.', '!', ':', '-', '+', '(', ']', '}', '#', '"', '*', '>', '<', ';', '°']
   const splitWord = word.split("");
 
   splitWord.forEach((el, i) => {
