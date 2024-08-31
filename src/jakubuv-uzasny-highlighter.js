@@ -180,6 +180,7 @@ function setup(element, underlineObjects, elementWindow) {
 function getErrors(data) {
   const wordsWithErrors = [];
   let errors = [];
+  let unknown_word = ''
   let shifted = 0;
   let oneToken = "";
   let oneResult = "";
@@ -191,6 +192,7 @@ function getErrors(data) {
   data.flat().forEach((wordData, indexWord) => {
     wordData.errors.forEach((error) => {
       errors.push(error.type);
+      if (error.type === 'NEZNAME_SLOVO') unknown_word = error.result
     });
 
     const token = wordData.original_token.token;
@@ -222,9 +224,11 @@ function getErrors(data) {
         token: oneToken.trim(),
         result: oneResult.trim(),
         error: errors,
+        unknown_word: unknown_word,
         id: Math.random().toString(36).slice(2, 7),
       });
       errors = [];
+      unknown_word = ''
     }
     if (!token_con && !result_con) {
       oneToken = "";
@@ -270,14 +274,13 @@ function getNode(index, original, elementWindow) {
     const previousSibling =
       data[block_index].node.previousSibling || data[block_index].node.parentElement.previousSibling;
 
-    if (
-      (lastParent !== data[block_index].parent || previousSibling?.nodeName === "BR") &&
-      in_word &&
-      block_index !== 0
-    ) {
-      in_word = false;
-      ++word_count;
-    }
+    if ((lastParent !== data[block_index].parent
+      || previousSibling?.nodeName === 'BR'
+      || data[block_index].parent.tagName === 'UL') 
+      && in_word && block_index !== 0) {
+          in_word = false
+          ++word_count
+      }
 
     lastParent = data[block_index].parent;
 
@@ -315,45 +318,52 @@ function getNode(index, original, elementWindow) {
 }
 
 function getBlocks(element, elementWindow) {
-  let data = [new Block(1, element, null, null)];
-  let areChilds = true;
+  let data = [new Block(1, element, null, null)]
+  let areChilds = true
 
   while (areChilds) {
-    areChilds = false;
+      areChilds = false
+      let newData = []
 
-    let indexBlock = 0;
-    for (const oneBlock of data) {
-      if (oneBlock.type === 1) {
-        const parent = oneBlock.content;
-        const childElements = parent.children;
-        const childNodes = parent.childNodes;
-        let skipped = 0;
+      let indexBlock = 0
+      for (const oneBlock of data) {
+          
+          if (oneBlock.type === 1) {
+              const parent = oneBlock.content
+              const childElements = parent.children
+              const childNodes = parent.childNodes
+              let skipped = 0
+              
+              childNodes.forEach((node, indexNode) => {
+                  let parentBlock = oneBlock.parent
 
-        data.splice(indexBlock, 1);
+                  if (window.getComputedStyle(parent).display === 'block') parentBlock = parent
 
-        childNodes.forEach((node, indexNode) => {
-          let parentBlock = oneBlock.parent;
-          if (elementWindow.getComputedStyle(parent).display === "block") parentBlock = parent;
-
-          if (node.nodeType === 1) {
-            areChilds = true;
-            const element = childElements[indexNode - skipped];
-
-            data.splice(indexBlock + indexNode, 0, new Block(1, element, null, parentBlock));
-          } else if (node.nodeType === 3 && node.data !== undefined) {
-            ++skipped;
-            data.splice(indexBlock + indexNode, 0, new Block(2, node.data, node, parentBlock));
-          } else {
-            ++skipped;
-          }
-        });
+                  if (node.nodeType === 1) {
+                      areChilds = true
+                      const element = childElements[indexNode - skipped]
+              
+                      newData.push(new Block(1 ,element, null, parentBlock))
+              
+                  }
+                  else if (node.nodeType === 3 && node.data !== undefined) {
+                      ++skipped
+                      newData.push(new Block(2, node.data, node, parentBlock))
+                  }
+                  else {
+                      
+                      ++skipped
+                  }
+              })
+          } else if (oneBlock.type === 2) newData.push(oneBlock)
+          
+          ++indexBlock
       }
-      ++indexBlock;
-    }
-  }
 
-  data = data.filter((el) => el.type === 2);
-  return data;
+      data = newData
+  }
+  data = data.filter(el => el.type === 2)
+  return data
 }
 
 function fromRangeToUnderline(range, id, container, animate = false) {
@@ -396,21 +406,29 @@ function createUnderline(offset, node, underlineContainer, count, id, elementWin
   return [underlines, edit_range];
 }
 
+function isNumeric(str) {
+  if (typeof str != "string") return false 
+  return !isNaN(str) && !isNaN(parseFloat(str))
+}
+
 function getCount(word) {
-  let count = 0;
-  let create_new = false;
-  const inter =['?', ',', '.', '!', ':', '-', '+', '(', ']', '}', '#', '"', '*', '>', '<', ';', '°']
-  const splitWord = word.split("");
+  let count = 0
+  let create_new = false
+  const inter = ['?', ',', '!', ':', '-', '+', '(', ')', '[', ']', '{', '}', '#', '"', '*', '>', '<', ';', '…', '/', '–', '@', '%', '.']
+  const inter_big = inter + ['°', '˚']
+  const splitWord = word.replaceAll('&nbsp;', ' ').split('')
+
+  if (isNumeric(word) && (parseFloat(word) % 1 !== 0 || parseFloat(word).toString().length !== word.length)) return 1
 
   splitWord.forEach((el, i) => {
-    if (create_new || i === 0 || inter.includes(el)) {
-      if (i !== 0) {
-        if (splitWord[i - 1] !== el) ++count;
-      } else ++count;
-    }
-    create_new = inter.includes(el);
-  });
-  return count;
+      if (create_new || i === 0 || inter_big.includes(el)) {
+          if (i !== 0) {
+              if (!inter.includes(splitWord[i -1]) || !inter_big.includes(el)) ++count
+          } else ++count
+      } 
+      create_new = inter_big.includes(el)
+  })
+  return count
 }
 
 function makeReturnObject(obj, element, root, sendObj, setObj) {
@@ -461,23 +479,25 @@ const processed_elements = [];
  */
 
 export function getText(element) {
-  const blocks = getBlocks(element, element.ownerDocument.defaultView); // get all nodes (blocks) that are text nodes
-  let text = "";
-  // adding text together and adds new paragraph if element is block element
-  blocks.forEach((block) => {
-    text += block.content;
-
-    if (
-      (block.node.parentElement !== element && getComputedStyle(block.node.parentElement).display === "block") ||
-      block.node.parentElement.nextSibling?.nodeName === "BR"
-    ) {
-      text += "\n";
+  const blocks = getBlocks(textElement, window)
+  let text = ''
+  let lastParent = null
+  
+  blocks.forEach((block) => { 
+    const nextSibling = block.node.nextSibling || block.node.parentElement.nextSibling
+    
+    if ((lastParent !== block.parent && lastParent !== null)
+    || nextSibling?.nodeName === 'BR'
+    || block.parent.tagName === 'UL') {
+        text += '\n'
     }
-  });
+        
+    text += block.content
+    lastParent = block.parent
+  })
 
-  text = text.replace(/ +/g, " ").trim();
-
-  return text;
+  text = text.replaceAll(' ', ' ').replace(/ +/g, ' ').trim()
+  return text
 }
 
 export function runHighlight(element, content, sendObj) {
@@ -573,6 +593,9 @@ export function runHighlight(element, content, sendObj) {
       return;
     }
 
+    let new_text = element.innerText.replace(/\s+/g, " ").trim().split(" ");
+    if (old_text.join(' ') === new_text.join(' ')) return
+
     const rectTextElement = element.getBoundingClientRect();
     const rectUnderlineWindow = underlineWindow.getBoundingClientRect();
     const topWindow = parseInt(elementWindow.getComputedStyle(underlineWindow).top);
@@ -583,8 +606,6 @@ export function runHighlight(element, content, sendObj) {
 
     underlineWindow.style.width = element.clientWidth + "px";
     underlineWindow.style.height = element.clientHeight + "px";
-
-    let new_text = element.innerText.replace(/\s+/g, " ").trim().split(" ");
 
     let same_before = 0;
     for (let index in new_text) {
