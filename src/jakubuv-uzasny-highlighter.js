@@ -274,13 +274,18 @@ function getNode(index, original, elementWindow) {
     const previousSibling =
       data[block_index].node.previousSibling || data[block_index].node.parentElement.previousSibling;
 
-    if ((lastParent !== data[block_index].parent
-      || previousSibling?.nodeName === 'BR'
-      || data[block_index].parent.tagName === 'UL') 
-      && in_word && block_index !== 0) {
-          in_word = false
-          ++word_count
-      }
+      if ((lastParent !== data[block_index].parent
+        || previousSibling?.nodeName === 'BR'
+        || previousSibling?.nodeName === 'TD'
+        || data[block_index].node.parentElement.tagName === 'TD'
+        || previousSibling?.nodeName === 'TH'
+        || data[block_index].node.parentElement.tagName === 'TH'
+        || data[block_index].parent.tagName === 'OL'
+        || data[block_index].parent.tagName === 'UL') 
+        && in_word && block_index !== 0) {
+            in_word = false
+            ++word_count
+        }
 
     lastParent = data[block_index].parent;
 
@@ -411,15 +416,28 @@ function isNumeric(str) {
   return !isNaN(str) && !isNaN(parseFloat(str))
 }
 
+const perex = ['k', 'h', 'da', 'd', 'c', 'm', 'μ', 'p', 'f', 'a', 'z', 'y', 'g', 't', 'e', '']
+const units = ['m', 'g', 's', 'a', 'k', 'mol', 'cd', 'l', 'w', 'h', 'hz']
+
+const allUnits = units.map(el => perex.map(unit => unit + el)).flat()
+
 function getCount(word) {
   let count = 0
   let create_new = false
-  const inter = ['?', ',', '!', ':', '-', '+', '(', ')', '[', ']', '{', '}', '#', '"', '*', '>', '<', ';', '…', '/', '–', '@', '%', '.']
-  const inter_big = inter + ['°', '˚']
-  const splitWord = word.replaceAll('&nbsp;', ' ').split('')
-
+  const inter = ['?', ',', '!', ':', '-', '(', ')', '[', ']', '{', '}', '#', '"', '*', '>', '<', ';', '…', '/', '–', '@', '%', '.']
+  const inter_big = inter + ['°', '˚', '+']
+  
+  const numInWord = word.match(/\d+([.,]\d+)?/)?.at(0)
+  
+  if (numInWord?.includes('.') || numInWord?.includes(',')) {
+      count += 1
+      word = word.replace(numInWord, '')
+      if (allUnits.includes(word)) return count
+  }
+      
   if (isNumeric(word) && (parseFloat(word) % 1 !== 0 || parseFloat(word).toString().length !== word.length)) return 1
 
+  const splitWord = word.replaceAll('&nbsp;', ' ').split('')
   splitWord.forEach((el, i) => {
       if (create_new || i === 0 || inter_big.includes(el)) {
           if (i !== 0) {
@@ -488,11 +506,13 @@ export function getText(element) {
     
     if ((lastParent !== block.parent && lastParent !== null)
     || nextSibling?.nodeName === 'BR'
-    || block.parent.tagName === 'UL') {
-        text += '\n'
-    }
+    || nextSibling?.nodeName === 'TH'
+    || nextSibling?.nodeName === 'TD'
+    || block.parent.tagName === 'OL'
+    || block.parent.tagName === 'UL')  {
+        text += '\n' + block.content + '\n'
+    } else text += block.content
         
-    text += block.content
     lastParent = block.parent
   })
 
