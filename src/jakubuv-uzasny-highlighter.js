@@ -322,6 +322,8 @@ function getNode(index, original, elementWindow) {
   return [node ? node.node : null, offset];
 }
 
+const display = ['block', 'table-cell']
+
 function getBlocks(element, elementWindow) {
   let data = [new Block(1, element, null, null)]
   let areChilds = true
@@ -342,7 +344,7 @@ function getBlocks(element, elementWindow) {
               childNodes.forEach((node, indexNode) => {
                   let parentBlock = oneBlock.parent
 
-                  if (window.getComputedStyle(parent).display === 'block') parentBlock = parent
+                  if (display.includes(window.getComputedStyle(parent).display)) parentBlock = parent
 
                   if (node.nodeType === 1) {
                       areChilds = true
@@ -424,7 +426,7 @@ const allUnits = units.map(el => perex.map(unit => unit + el)).flat()
 function getCount(word) {
   let count = 0
   let create_new = false
-  const inter = ['?', ',', '!', ':', '-', '(', ')', '[', ']', '{', '}', '#', '"', '*', '>', '<', ';', '…', '/', '–', '@', '%', '.']
+  const inter = ['?', ',', '!', ':', '-', '(', ')', '[', ']', '{', '}', '#', '"', '*', '>', '<', ';', '…', '/', '–', '@', '%', '.', '“', '„']
   const inter_big = inter + ['°', '˚', '+']
   
   const numInWord = word.match(/\d+([.,]\d+)?/)?.at(0)
