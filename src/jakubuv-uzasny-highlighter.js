@@ -413,11 +413,6 @@ function createUnderline(offset, node, underlineContainer, count, id, elementWin
   return [underlines, edit_range];
 }
 
-function isNumeric(str) {
-  if (typeof str != "string") return false 
-  return !isNaN(str) && !isNaN(parseFloat(str))
-}
-
 const perex = ['k', 'h', 'da', 'd', 'c', 'm', 'μ', 'p', 'f', 'a', 'z', 'y', 'g', 't', 'e', '']
 const units = ['m', 'g', 's', 'a', 'k', 'mol', 'cd', 'l', 'w', 'h', 'hz']
 
@@ -427,7 +422,7 @@ function getCount(word) {
   let count = 0
   let create_new = false
   const inter = ['?', ',', '!', ':', '-', '(', ')', '[', ']', '{', '}', '#', '"', '*', '>', '<', ';', '…', '/', '–', '@', '%', '.', '“', '„']
-  const inter_big = inter + ['°', '˚', '+']
+  const inter_big = inter + ['°', '˚', '+', '=']
   
   const numInWord = word.match(/\d+([.,]\d+)?/)?.at(0)
   
@@ -437,8 +432,6 @@ function getCount(word) {
       if (allUnits.includes(word)) return count
   }
       
-  if (isNumeric(word) && (parseFloat(word) % 1 !== 0 || parseFloat(word).toString().length !== word.length)) return 1
-
   const splitWord = word.replaceAll('&nbsp;', ' ').split('')
   splitWord.forEach((el, i) => {
       if (create_new || i === 0 || inter_big.includes(el)) {
