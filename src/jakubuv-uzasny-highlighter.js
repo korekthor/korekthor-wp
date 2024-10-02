@@ -492,7 +492,7 @@ const processed_elements = [];
  */
 
 export function getText(element) {
-  const blocks = getBlocks(textElement, window)
+  const blocks = getBlocks(element, window)
   let text = ''
   let lastParent = null
   
