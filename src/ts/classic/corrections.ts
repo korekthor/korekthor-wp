@@ -97,7 +97,7 @@ const update_corrections = (data: ObjectElement[], correct_all: () => void, reje
 
     // populate mistake details
     const details = fragment.querySelector(".korekthor-mistake-details");
-    details.textContent = mistake.error.error.map((e: string) => korekthor_ajax.error_codes[e]).join(",");
+    details.textContent = mistake.error.error.map((e: string) => korekthor_ajax.error_codes[e]).join(", ");
 
     // make buttons work
     const accept = fragment.querySelector(".korekthor-button-accept");
