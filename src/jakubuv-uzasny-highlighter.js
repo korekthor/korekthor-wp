@@ -178,68 +178,89 @@ function setup(element, underlineObjects, elementWindow) {
 }
 
 function getErrors(data) {
-  const wordsWithErrors = [];
-  let errors = [];
+  const wordsWithErrors = []
+  let errors = []
   let unknown_word = ''
-  let shifted = 0;
-  let oneToken = "";
-  let oneResult = "";
+  let shifted = 0
 
-  let connect_to_token = false;
-  let connect_to_result = false;
+  let connect_to_token = false
+  let connect_to_result = false
 
-  let index = -1;
-  data.flat().forEach((wordData, indexWord) => {
-    wordData.errors.forEach((error) => {
-      errors.push(error.type);
-      if (error.type === 'NEZNAME_SLOVO') unknown_word = error.result
-    });
+  if (!data) return []
 
-    const token = wordData.original_token.token;
-    const result = wordData.result;
-    const wordCount = token.trim().split(" ").length;
+  let index = -1
 
-    const ends_non_breaking = token.slice(-6) === "&nbsp;";
-
-    const token_con = wordData.original_token.connect_with_after && !ends_non_breaking;
-    const result_con = wordData.connect_with_after && !ends_non_breaking;
-
-    if (!connect_to_result && connect_to_token) {
-      oneToken += token;
-      oneResult += " " + result;
-    } else if (connect_to_result && !connect_to_token) {
-      oneToken += " " + token;
-      oneResult += result;
-    } else {
-      oneToken += token;
-      oneResult += result;
+  data.forEach(paragraph => {
+    let oneToken = ''
+    let oneResult = ''
+    const words = paragraph.sentences.flat()
+    if (paragraph.end_paragraphs > 0){
+      const last = words[words.length - 1]
+      last.connect_with_after = true
+      last.original_token.connect_with_after = true
+      words.push({
+        connect_with_after: false,
+        errors: [],
+        original_token: {token: "\n", connect_with_after: false},
+        result: "\n"
+      })
     }
 
-    if (connect_to_token) shifted += wordCount;
-    index += wordCount;
+    words.forEach((wordData, indexWord) => {   
+      wordData.errors.forEach((error) => {
+        errors.push(error.type)
+        if (error.type === 'NEZNAME_SLOVO') unknown_word = error.result
+      })
 
-    if (!token_con && !result_con && errors.length > 0) {
-      wordsWithErrors.push({
-        index: index - shifted,
-        token: oneToken.trim(),
-        result: oneResult.trim(),
-        error: errors,
-        unknown_word: unknown_word,
-        id: Math.random().toString(36).slice(2, 7),
-      });
-      errors = [];
-      unknown_word = ''
-    }
-    if (!token_con && !result_con) {
-      oneToken = "";
-      oneResult = "";
-    }
+      const token = wordData.original_token.token
+      const result = wordData.result
+      const wordCount = (token.trim().length > 0) ? token.trim().split(' ').length : 0
 
-    connect_to_token = token_con;
-    connect_to_result = result_con;
-  });
+      const ends_non_breaking = token.slice(-6) === '&nbsp;'
 
-  return wordsWithErrors;
+      const token_con = wordData.original_token.connect_with_after && !ends_non_breaking
+      const result_con = wordData.connect_with_after && !ends_non_breaking
+
+
+      if (!connect_to_result && connect_to_token) {
+        oneToken += token
+        oneResult += ' ' + result
+      } else if (connect_to_result && !connect_to_token) {
+        oneToken += ' ' + token
+        oneResult += result
+      } else {
+        oneToken += token
+        oneResult += result
+      }
+
+      if (connect_to_token) shifted += wordCount
+      
+      index += wordCount
+      // console.log(index, shifted, result)
+      if (((!token_con && !result_con) || indexWord + 1 === words.length) && errors.length > 0) {
+        wordsWithErrors.push({
+          index: index - shifted,
+          token: oneToken.trim(),
+          result: oneResult.trim(),
+          error: [...new Set(errors)],
+          unknown_word: unknown_word,
+          id: Math.random().toString(36).slice(2, 7)
+        })
+        unknown_word = ''
+        errors = []
+      }
+      if (!token_con && !result_con) {
+          oneToken = ''
+          oneResult = ''
+      }
+
+      connect_to_token = token_con
+      connect_to_result = result_con
+
+    })
+  })
+
+  return wordsWithErrors
 }
 
 function setupError(error, mainElement, underlineContainer, elementWindow, animate) {
@@ -599,84 +620,165 @@ export function runHighlight(element, content, sendObj) {
   });
   ro.observe(underlineContainer);
 
-  element.addEventListener("input", handleInput);
+  const mo = new MutationObserver((mutations) => {
+    handleInput({isTrusted: true})
+  })
+  mo.observe(element, { attributes: true, subtree: true, childList: true, characterData: true })
 
-  let old_text = element.innerText.replace(/\s+/g, " ").trim().split(" ");
-  function handleInput(e) {
-    if (!e.isTrusted) {
-      old_text = element.innerText.replace(/\s+/g, " ").trim().split(" ");
-      return;
+  let old_text_str = element.innerText
+    function handleInput (e) {
+        // get new content
+        let new_text = element.innerText
+        if (old_text_str === new_text) {
+            return console.log("same") // igonre if text is the same
+        }
+            
+        if (!e.isTrusted || underlineObjects.length === 0) {
+            old_text_str = element.innerText
+            console.log("not trusted")
+            return // ignore events created by function handleDicision
+        }
+
+        console.log("input")
+        const old_text = old_text_str.replace(/\s+/g, ' ').trim().split(' ')
+        old_text_str = new_text
+        new_text = new_text.replace(/\s+/g, ' ').trim().split(' ')
+
+        const rectElement = element.getBoundingClientRect()
+        const rectUnderlineWindow = underlineWindow.getBoundingClientRect()
+        const topWindow = parseInt(window.getComputedStyle(underlineWindow).top)
+        const leftWindow = parseInt(window.getComputedStyle(underlineWindow).left)
+
+        underlineWindow.style.top = (rectElement.y - rectUnderlineWindow.y) + topWindow + 'px'
+        underlineWindow.style.left = (rectElement.x - rectUnderlineWindow.x) + leftWindow + 'px'
+
+        // update dimensions (scrollbar can show or disappear)
+        underlineWindow.style.width = element.clientWidth + 'px'
+        underlineWindow.style.height = element.clientHeight + 'px'
+        
+        // save original selection inside textarea
+
+        if (new_text.toString() === old_text.toString()) {
+            console.log("same 55")
+            const newUnderlineObjects = []
+
+            // save all ranges
+            const sel = elementWindow.getSelection()
+            const allRangesBefore = []
+            
+            for (let i = 0; i < sel.rangeCount; ++i) {
+                allRangesBefore.push(sel.getRangeAt(i))
+            }
+            sel.removeAllRanges()
+
+            const invalidElements = underlineObjects[0][1][0]?.getBoundingClientRect()?.width === 0 || true
+            if (invalidElements) underlineContainer.innerHTML = '' // remove invalid elements
+
+            underlineObjects.forEach(object => {
+                const error = object[0]
+
+                const underlineArr = setupError(error, element, underlineContainer, elementWindow, false)
+                if (!underlineArr) return
+
+                const [newUnderlines, range] = underlineArr
+                if (invalidElements) newUnderlineObjects.push([error, newUnderlines, range])
+                else newUnderlineObjects.push([error, object[1], range])
+            })
+            underlineObjects = newUnderlineObjects // update underline objects
+            sendObj(...makeReturnObject(underlineObjects, element, root, sendObj, setObj));
+
+            // set all original ranges
+            allRangesBefore.forEach(ran => {
+                sel.addRange(ran)
+            })
+            return
+        }
+
+        // compute how many tokens are same form beginning
+        let same_before = 0
+        for (let index in new_text) {
+            index = parseInt(index)
+            if (old_text[index] !== new_text[index]) break
+            // const token = old_text[index]
+            // if (token === old_text[index + 1] || token === new_text[index + 1]) {
+            //     break
+            // }
+            ++same_before
+        }
+
+        new_text.reverse()
+        old_text.reverse()
+
+        // compute how many tokens are same form ending
+        let same_after = 0
+        while (same_after < new_text.length) {
+            if (new_text[same_after] !== old_text[same_after]) break
+            const token = old_text[same_after]
+            if (token === old_text[same_after + 1] || token === new_text[same_after + 1]) {
+                let l = same_after + 1
+                let same_duplicate_count = true
+                while (l < new_text.length) {
+                    if (new_text[l] === token && old_text[l] === token) {
+                        ++l
+                    } else if (new_text[l] !== token && old_text[l] !== token) {
+                        break
+                    } else {
+                        same_duplicate_count = false
+                        break
+                    }
+                }
+                if (same_duplicate_count) {
+                    same_after = l
+                } else break
+            }
+            ++same_after
+        }
+        // for (let index in new_text) {
+        //     index = parseInt(index)
+        //     if (new_text[index] !== old_text[index]) break
+        //     const token = old_text[index]
+        //     if (token === old_text[index + 1] || token === new_text[index + 1]) break
+
+        //     ++same_after
+        // }
+
+        // compute how many tokens are different
+        let between = old_text.length - (same_after + same_before) 
+        if ((new_text.length - old_text.length) + between < 0) between += (new_text.length - old_text.length)
+
+        const newUnderlineObjects = []
+        underlineContainer.innerHTML = '' // remove old underlines
+
+        // save all ranges
+        const sel = elementWindow.getSelection()
+        const allRangesBefore = []
+        
+        for (let i = 0; i < sel.rangeCount; ++i) {
+          allRangesBefore.push(sel.getRangeAt(i))
+        }
+        sel.removeAllRanges()
+
+        underlineObjects.forEach(object => {
+            const error = object[0]
+            let index = error.index
+            const token_len = error.token.split(' ').length 
+
+            if (index - (token_len - 1) > (same_before + between) - 1) {
+                if (new_text.length !== old_text.length) index += (new_text.length - old_text.length)
+            } else if (index > same_before - 1) return
+            error.index = index
+            const underlineArr = setupError(error, element, underlineContainer, elementWindow, false)
+            if (!underlineArr) return
+
+            const [underlines, range] = underlineArr
+            newUnderlineObjects.push([error, underlines, range])
+        })
+        underlineObjects = newUnderlineObjects // update underline objects
+        sendObj(...makeReturnObject(underlineObjects, element, root, sendObj, setObj));
+        // set all original ranges
+        allRangesBefore.forEach(ran => {
+            sel.addRange(ran)
+        })
     }
-
-    let new_text = element.innerText.replace(/\s+/g, " ").trim().split(" ");
-    if (old_text.join(' ') === new_text.join(' ')) return
-
-    const rectTextElement = element.getBoundingClientRect();
-    const rectUnderlineWindow = underlineWindow.getBoundingClientRect();
-    const topWindow = parseInt(elementWindow.getComputedStyle(underlineWindow).top);
-    const leftWindow = parseInt(elementWindow.getComputedStyle(underlineWindow).left);
-
-    underlineWindow.style.top = rectTextElement.y - rectUnderlineWindow.y + topWindow + "px";
-    underlineWindow.style.left = rectTextElement.x - rectUnderlineWindow.x + leftWindow + "px";
-
-    underlineWindow.style.width = element.clientWidth + "px";
-    underlineWindow.style.height = element.clientHeight + "px";
-
-    let same_before = 0;
-    for (let index in new_text) {
-      index = parseInt(index);
-      if (old_text[index] !== new_text[index]) break;
-      const token = old_text[index];
-      if (token === old_text[index + 1] || token === new_text[index + 1]) {
-        break;
-      }
-      ++same_before;
-    }
-    new_text.reverse();
-    old_text.reverse();
-
-    let same_after = 0;
-    for (let index in new_text) {
-      index = parseInt(index);
-      if (new_text[index] !== old_text[index]) break;
-      const token = old_text[index];
-      if (token === old_text[index + 1] || token === new_text[index + 1]) break;
-
-      ++same_after;
-    }
-    let between = old_text.length - (same_after + same_before);
-    if (new_text.length - old_text.length + between < 0) between += new_text.length - old_text.length;
-
-    const newUnderlineObjects = [];
-    underlineContainer.innerHTML = "";
-
-    const sel = elementWindow.getSelection();
-    const allRangesBefore = [];
-
-    for (let i = 0; i < sel.rangeCount; ++i) allRangesBefore.push(sel.getRangeAt(i));
-    sel.removeAllRanges();
-
-    underlineObjects.forEach((object) => {
-      const error = object[0];
-      let index = error.index;
-
-      const token_len = error.token.split(" ").length;
-
-      if (index - (token_len - 1) > same_before + between - 1) {
-        if (new_text.length !== old_text.length) index += new_text.length - old_text.length;
-      } else if (index > same_before - 1) return;
-
-      error.index = index;
-      const [underlines, range] = setupError(error, element, underlineContainer, elementWindow, false);
-      newUnderlineObjects.push([error, underlines, range]);
-    });
-    underlineObjects = newUnderlineObjects;
-    sendObj(...makeReturnObject(underlineObjects, element, root, sendObj, setObj));
-
-    allRangesBefore.forEach((ran) => {
-      sel.addRange(ran);
-    });
-
-    old_text = new_text.reverse();
-  }
 }
+
