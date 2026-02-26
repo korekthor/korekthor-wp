@@ -1,4 +1,4 @@
-yarn build
+#yarn build
 cp -r src/* subversion/trunk
 cp -r vendor/ subversion/trunk
 cp readme.txt subversion/trunk

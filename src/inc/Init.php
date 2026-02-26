@@ -5,6 +5,7 @@
 
 namespace Inc;
 
+
 final class Init {
   /**
    * Store all the classes inside an array
@@ -12,13 +13,13 @@ final class Init {
    */
   public static function get_services() {
     return [
-      Pages\Dashboard::class,
-      Pages\Settings::class,
-      Base\Enqueue::class,
-      Base\SettingsLinks::class,
-      Base\AjaxController::class,
-      TapIns\GutenbergEditor::class,
-      TapIns\ClassicEditor::class,
+      \Inc\Pages\Dashboard::class,
+      \Inc\Pages\Settings::class,
+      \Inc\Base\Enqueue::class,
+      \Inc\Base\SettingsLinks::class,
+      \Inc\Base\AjaxController::class,
+      \Inc\TapIns\GutenbergEditor::class,
+      \Inc\TapIns\ClassicEditor::class,
     ];
   }
 
