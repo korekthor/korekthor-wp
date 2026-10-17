@@ -28,7 +28,7 @@
         Přehled
       </h3>
       <div>
-        <? if (!$api_key_is_set) { ?>
+        <?php if (!$api_key_is_set) { ?>
           <div>
             <h4>
               API klíč není nastaven.
@@ -40,7 +40,7 @@
               Po vytvoření API klíče přejděte do <a href="<?= admin_url("admin.php?page=korekthor_settings") ?>">nastavení</a> a vložte ho do pole "API klíč".
             </p>
           </div>
-        <? } else if (isset($data["error"])) { ?>
+        <?php } else if (isset($data["error"])) { ?>
           <div>
             <h4>
               Nepodařilo se načíst data o firmě.
@@ -53,7 +53,7 @@
               Můžete ho zkontrolovat v <a href="<?= admin_url("admin.php?page=korekthor_settings") ?>">nastavení</a>.
             </p>
           </div>
-        <? } else { ?>
+        <?php } else { ?>
           <div>
             <h4>
               Přihlášeno k firmě
@@ -68,7 +68,7 @@
               Pro správu firmy přejděte do <a href="https://korekthor.cz/firma" target="_blank">administrace firmy</a>.
             </p>
           </div>
-        <? } ?>
+        <?php } ?>
       </div>
     </div>
 

@@ -20,7 +20,7 @@ class FieldCallbacks extends BaseController {
 
 ?>
     <input type="checkbox" name="<?= $name ?>" value="1" class="<?= $class ?>" <?= $checkbox ? "checked" : "" ?>>
-  <?
+  <?php
   }
 
   public function text_field($args) {
@@ -31,7 +31,7 @@ class FieldCallbacks extends BaseController {
 
   ?>
     <input type="text" name="<?= $name ?>" value="<?= $text ?>" class="<?= $class ?>" placeholder="<?= $placeholder ?>">
-  <?
+  <?php
   }
 
   public function textarea_field($args) {
@@ -42,6 +42,6 @@ class FieldCallbacks extends BaseController {
     $rows = isset($args["rows"]) ? $args["rows"] : 5;
   ?>
     <textarea rows="<?= $rows ?>" name="<?= $name ?>" class="regular-text <?= $class ?>" placeholder="<?= $placeholder ?>"><?= $content ?></textarea>
-<?
+<?php
   }
 }
