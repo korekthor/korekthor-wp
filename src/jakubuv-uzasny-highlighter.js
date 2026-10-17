@@ -295,18 +295,18 @@ function getNode(index, original, elementWindow) {
     const previousSibling =
       data[block_index].node.previousSibling || data[block_index].node.parentElement.previousSibling;
 
-      if ((lastParent !== data[block_index].parent
-        || previousSibling?.nodeName === 'BR'
-        || previousSibling?.nodeName === 'TD'
-        || data[block_index].node.parentElement.tagName === 'TD'
-        || previousSibling?.nodeName === 'TH'
-        || data[block_index].node.parentElement.tagName === 'TH'
-        || data[block_index].parent.tagName === 'OL'
-        || data[block_index].parent.tagName === 'UL') 
-        && in_word && block_index !== 0) {
-            in_word = false
-            ++word_count
-        }
+    if ((lastParent !== data[block_index].parent
+      || previousSibling?.nodeName === 'BR'
+      || previousSibling?.nodeName === 'TD'
+      || data[block_index].node.parentElement.tagName === 'TD'
+      || previousSibling?.nodeName === 'TH'
+      || data[block_index].node.parentElement.tagName === 'TH'
+      || data[block_index].parent.tagName === 'OL'
+      || data[block_index].parent.tagName === 'UL') 
+      && in_word && block_index !== 0) {
+        in_word = false
+        ++word_count
+      }
 
     lastParent = data[block_index].parent;
 
@@ -343,7 +343,7 @@ function getNode(index, original, elementWindow) {
   return [node ? node.node : null, offset];
 }
 
-const display = ['block', 'table-cell']
+const display = ['block', 'table-cell', 'list-item']
 
 function getBlocks(element, elementWindow) {
   let data = [new Block(1, element, null, null)]
