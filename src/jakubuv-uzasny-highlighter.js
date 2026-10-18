@@ -50,7 +50,9 @@ export class ObjectElement {
       if (object[0].id === this.error.id) return;
 
       if (object[2].collapsed) {
-        const [underlines, range] = setupError(object[0], this.element, underlineContainer, elementWindow, false);
+        const underlineArr = setupError(object[0], this.element, underlineContainer, elementWindow, false);
+        if (!underlineArr) return
+        const [underlines, range] = underlineArr
         newParent.push([object[0], underlines, range]);
       } else {
         const underlines = fromRangeToUnderline(object[2], object[0].id, underlineContainer, false);
@@ -428,6 +430,15 @@ function createUnderline(offset, node, underlineContainer, count, id, elementWin
     sel.modify("extend", "backward", "word");
   }
   const edit_range = sel.getRangeAt(0);
+  
+  if (edit_range.toString() !== range_text) {
+      // remove all ranges
+      sel.removeAllRanges()
+
+      // test if range text is the same as error token
+      console.log('ERROR: range text is not the same as error token for word:', range_text)
+      return null
+  }
   const underlines = fromRangeToUnderline(edit_range, id, underlineContainer, animate);
 
   sel.removeAllRanges();
@@ -442,7 +453,7 @@ const allUnits = units.map(el => perex.map(unit => unit + el)).flat()
 function getCount(word) {
   let count = 0
   let create_new = false
-  const inter = ['?', ',', '!', ':', '-', '(', ')', '[', ']', '{', '}', '#', '"', '*', '>', '<', ';', '…', '/', '–', '@', '%', '.', '“', '„']
+  const inter = ['?', ',', '!', ':', '-', '(', ')', '[', ']', '{', '}', '#', '"', '*', '>', '<', ';', '…', '/', '–', '@', '%', '.', '“', '„', "”"]
   const inter_big = inter + ['°', '˚', '+', '=']
   
   const numInWord = word.match(/\d+([.,]\d+)?/)?.at(0)
@@ -608,7 +619,9 @@ export function runHighlight(element, content, sendObj) {
       underlineWindow.style.left = rectTextElement.x - rectUnderlineWindow.x + leftWindow + "px";
 
       errors.forEach((error) => {
-        const [underlines, range] = setupError(error, element, underlineContainer, elementWindow, true);
+        const underlineArr = setupError(error, element, underlineContainer, elementWindow, true);
+        if (!underlineArr) return
+        const [underlines, range] = underlineArr
         underlineObjects.push([error, underlines, range]);
       });
 
