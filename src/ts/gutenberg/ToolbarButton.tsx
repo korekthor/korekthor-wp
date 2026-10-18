@@ -1,30 +1,19 @@
-import { BlockControls, useBlockProps } from "@wordpress/block-editor";
-import { ToolbarGroup, ToolbarButton, Button } from "@wordpress/components";
-
+import { Button } from "@wordpress/components";
 import React from "react";
 import KorekthorIcon from "./icon";
 
-const KorekthorToolbarButton = () => {
+interface KorekthorToolbarButtonProps {
+  onClick?: () => void;
+}
+
+const KorekthorToolbarButton: React.FC<KorekthorToolbarButtonProps> = ({ onClick }) => {
   return (
-    // <div {...useBlockProps()}>
-    //   <BlockControls>
-    //     <ToolbarGroup>
     <Button
       icon={<KorekthorIcon />}
-      label="Edit"
-      onClick={() => alert("Editing")}
+      label="Zkontrolovat článek"
+      onClick={onClick}
     />
-    //     </ToolbarGroup>
-    //   </BlockControls>
-    // </div>
   );
 };
-
-// registerFormatType("my-custom-format/sample-output", {
-//   title: "Opravit text",
-//   tagName: "totojemujtag",
-//   className: null,
-//   edit: KorekthorToolbarButton,
-// });
 
 export default KorekthorToolbarButton;

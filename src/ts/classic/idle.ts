@@ -9,13 +9,15 @@ export const setup_idle_screen = () => {
   const button_start = document.getElementById("korekthor-button-check");
   const button_dictionaries = document.getElementById("korekthor-button-dictionaries");
 
-  button_start.addEventListener("click", () => {
+  button_start?.addEventListener("click", () => {
     correct();
   });
 
-  button_dictionaries.addEventListener("click", (e) => {
-    e.preventDefault();
-    e.stopImmediatePropagation();
-    setup_dictionary_screen();
-  });
+  if (button_dictionaries) {
+    button_dictionaries.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      setup_dictionary_screen();
+    });
+  }
 };

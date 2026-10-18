@@ -1,0 +1,17 @@
+{
+  "name": "Korekthor pro WordPress",
+  "slug": "korekthor",
+  "version": "1.2.1",
+  "author": "<a href=\"https://korekthor.cz\">Korekthor</a>",
+  "author_profile": "https://korekthor.cz",
+  "homepage": "https://korekthor.cz",
+  "requires": "5.0",
+  "tested": "6.7",
+  "requires_php": "7.4",
+  "download_url": "https://korekthor.cz/korekthor-wp.zip",
+  "last_updated": "2026-10-19 00:50:00",
+  "sections": {
+    "description": "Korekthor plugin pro WordPress – integrujte sílu pokročilé neuronové kontroly pravopisu a stylistiky přímo do blokového (Gutenberg) i klasického editoru.",
+    "changelog": "<h4>1.2.1</h4><ul><li>Zlepšení stability a spolehlivosti.</li></ul><h4>1.2.0</h4><ul><li>Přidána kontrola a oprava titulku a perexu pro Gutenberg i Classic editor.</li><li>Zobrazení chyb rozdělené do sekcí pouze tam, kde je nalezena chyba.</li><li>Zvýraznění a označení chyb v polích titulku a perexu.</li><li>Integrovaný systém pro automatické aktualizace z korekthor.cz.</li></ul>"
+  }
+}

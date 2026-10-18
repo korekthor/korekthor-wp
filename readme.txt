@@ -3,7 +3,7 @@ Contributors: tenviki
 Tags: czech,correction
 Requires at least: 4.7
 Tested up to: 5.4
-Stable tag: 1.0.0
+Stable tag: 1.2.1
 Requires PHP: 7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -47,6 +47,15 @@ Answer to foo bar dilemma.
 2. This is the second screen shot
 
 == Changelog ==
+
+= 1.2.1 =
+* Zlepšení stability a spolehlivosti systému.
+
+= 1.2.0 =
+* Kontrola a oprava titulku a perexu
+* Rozdělení chyb podle částí příspěvku a skrytí prázdných kategorií
+* Zvýraznění chyb v titulku a perexu bez nežádoucího posouvání stránky
+* Automatický aktualizační systém z korekthor.cz
 
 = 1.0 =
 * A change since the previous version.

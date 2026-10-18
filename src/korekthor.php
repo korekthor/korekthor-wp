@@ -9,7 +9,7 @@
 Plugin Name: Korekthor pro WordPress
 Plugin URI: https://korekthor.cz/ 
 Description: Korekthor plugin pro WordPress - integrujte sílu korekthoru přímo do vašich stránek!
-Version: 1.0.0
+Version: 1.2.1
 Author: Viktor Komárek
 Author URI: https://vikithedev.eu/
 License: GPLv2 or later
@@ -24,6 +24,12 @@ if (file_exists(dirname(__FILE__) . "/vendor/autoload.php")) {
 }
 
 define("KOREKTHOR_API_URL", "https://api.korekthor.cz");
+define("KOREKTHOR_VERSION", "1.2.1");
+define("KOREKTHOR_PLUGIN_BASENAME", plugin_basename(__FILE__));
+
+if (!defined("KOREKTHOR_UPDATE_URL")) {
+  define("KOREKTHOR_UPDATE_URL", "https://korekthor.cz/korekthor-wp-info.json");
+}
 
 function korekthor_activate() {
   Inc\Base\Activate::activate();

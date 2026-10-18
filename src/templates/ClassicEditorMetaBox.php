@@ -10,10 +10,6 @@
       <button type="button" class="button button-primary button-large korekthor-button-fullwidth" id="korekthor-button-check">
         Zkontrolovat článek
       </button>
-
-      <a href="#" class="thickbox korekthor-classic-link" id="korekthor-button-dictionaries">
-        Otevřít výběr slovníků
-      </a>
     </div>
   </template>
 

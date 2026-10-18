@@ -61,3 +61,53 @@
     margin-bottom: .5rem;
   }
 }
+
+.korekthor-input-highlight {
+  border-color: #e74c3c !important;
+  box-shadow: 0 0 0 2px rgba(#e74c3c, 0.4) !important;
+}
+
+.korekthor-field-annotations {
+  margin-top: 6px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  line-height: 1.4;
+
+  .korekthor-annotation-label {
+    font-weight: 600;
+    color: #e74c3c;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .korekthor-annotation-pill {
+    background-color: #fff0f0;
+    border: 1px solid #f5c6cb;
+    border-radius: 4px;
+    padding: 2px 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: inherit;
+
+    .korekthor-annotation-wrong {
+      color: #e74c3c;
+      text-decoration: underline wavy #e74c3c;
+      font-weight: 500;
+    }
+
+    .korekthor-annotation-arrow {
+      color: #888;
+      font-size: 11px;
+    }
+
+    .korekthor-annotation-suggest {
+      color: #27ae60;
+      font-weight: 600;
+    }
+  }
+}

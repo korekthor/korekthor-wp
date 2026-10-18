@@ -119,3 +119,57 @@
   color: #777;
 }
 
+.korekthor-recheck-wrapper {
+  padding: 0 1rem;
+  margin-bottom: 0.5rem;
+  display: flex;
+  justify-content: flex-end;
+
+  button {
+    font-size: 12px;
+  }
+}
+
+.korekthor-part-section {
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 0.5rem;
+
+  &:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+  }
+}
+
+.korekthor-part-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background-color: #f7f7f7;
+  font-weight: 600;
+  font-size: 13px;
+  color: #1e1e1e;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+
+  .korekthor-part-badge {
+    background-color: #e74c3c;
+    color: #fff;
+    border-radius: 10px;
+    padding: 0.1rem 0.5rem;
+    font-size: 11px;
+    font-weight: 600;
+
+    &.is-zero {
+      background-color: #27ae60;
+    }
+  }
+}
+
+.korekthor-part-empty {
+  padding: 0.75rem 1rem;
+  color: #777;
+  font-size: 12px;
+  font-style: italic;
+}
+
