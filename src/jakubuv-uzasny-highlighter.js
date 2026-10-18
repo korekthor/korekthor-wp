@@ -261,25 +261,22 @@ function getErrors(data) {
 
     })
   })
-
   return wordsWithErrors
 }
 
 function setupError(error, mainElement, underlineContainer, elementWindow, animate) {
   const [node, offset] = getNode(error.index, mainElement, elementWindow);
   if (!node) return console.log("ERROR: not able to find node");
-
   let count = 0;
   error.token.split(" ").forEach((word) => {
     count += getCount(word);
   });
 
-  return createUnderline(offset, node, underlineContainer, count, error.id, elementWindow, animate);
+  return createUnderline(offset, node, underlineContainer, count, error.id, elementWindow, error.token, animate);
 }
 
 function getNode(index, original, elementWindow) {
   const data = getBlocks(original, elementWindow);
-
   const sym = [" ", "\n", " "];
   let block_index = 0;
   let word_count = -1;
@@ -419,7 +416,7 @@ function fromRangeToUnderline(range, id, container, animate = false) {
   return underlines;
 }
 
-function createUnderline(offset, node, underlineContainer, count, id, elementWindow, animate) {
+function createUnderline(offset, node, underlineContainer, count, id, elementWindow, range_text, animate) {
   const sel = elementWindow.getSelection();
 
   // word press needs the same thing twice to do something
@@ -437,6 +434,7 @@ function createUnderline(offset, node, underlineContainer, count, id, elementWin
 
       // test if range text is the same as error token
       console.log('ERROR: range text is not the same as error token for word:', range_text)
+      console.log(edit_range.toString())
       return null
   }
   const underlines = fromRangeToUnderline(edit_range, id, underlineContainer, animate);
