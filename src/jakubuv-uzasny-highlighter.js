@@ -188,6 +188,8 @@ function getErrors(data) {
   let connect_to_token = false
   let connect_to_result = false
 
+  let last_inserted = false
+
   if (!data) return []
 
   let index = -1
@@ -235,10 +237,10 @@ function getErrors(data) {
         oneResult += result
       }
 
-      if (connect_to_token) shifted += wordCount
+      if (connect_to_token && !last_inserted) shifted += wordCount
       
       index += wordCount
-      // console.log(index, shifted, result)
+      // console.log(index, shifted, wordCount, oneToken)
       if (((!token_con && !result_con) || indexWord + 1 === words.length) && errors.length > 0) {
         wordsWithErrors.push({
           index: index - shifted,
@@ -258,6 +260,7 @@ function getErrors(data) {
 
       connect_to_token = token_con
       connect_to_result = result_con
+      last_inserted = token === ""
 
     })
   })
@@ -276,7 +279,9 @@ function setupError(error, mainElement, underlineContainer, elementWindow, anima
 }
 
 function getNode(index, original, elementWindow) {
+  // console.log(index)
   const data = getBlocks(original, elementWindow);
+  // console.log(data)
   const sym = [" ", "\n", " "];
   let block_index = 0;
   let word_count = -1;
@@ -314,6 +319,7 @@ function getNode(index, original, elementWindow) {
       const last = token_index === text.length - 1 && block_index === data.length - 1;
       if ((sym.includes(token) && in_word) || last) {
         in_word = false;
+        // console.log(word_count, last, token, text)
         ++word_count;
       }
 
@@ -322,13 +328,15 @@ function getNode(index, original, elementWindow) {
       }
 
       if (word_count === index) {
-        if (all_sym_before && !block_end_space && block_index !== 0) {
+        if (all_sym_before && !block_end_space && block_index !== 0 && text.length !== 1) {
           node = data[block_index - 1];
           const len = data[block_index - 1].content.length;
           offset = len;
+          // console.log("uhidajskdhjhasd")
         } else {
           node = data[block_index];
           offset = last ? token_index + 1 : token_index;
+          // console.log("55555555555555555")
         }
       }
 
@@ -339,6 +347,7 @@ function getNode(index, original, elementWindow) {
     block_end_space = text[text.length - 1] === " ";
     ++block_index;
   }
+  // console.log(node, offset)
   return [node ? node.node : null, offset];
 }
 
@@ -394,12 +403,22 @@ function getBlocks(element, elementWindow) {
 }
 
 function fromRangeToUnderline(range, id, container, animate = false) {
-  const rects = range.getClientRects();
+  const rects = [...range.getClientRects()];
+  const uniqueRects = rects.filter(
+    (rect, index, arr) =>
+      arr.findIndex(
+        other =>
+          other.x === rect.x &&
+          other.y === rect.y &&
+          other.width === rect.width &&
+          other.height === rect.height
+      ) === index
+    );  
   const containerRect = container.getBoundingClientRect();
 
   const underlines = [];
 
-  for (const rect of rects) {
+  for (const rect of uniqueRects) {
     const underline = document.createElement("div");
     underline.classList = animate ? "underline underline-animate" : "underline";
     underline.style.width = rect.width + "px";
@@ -542,6 +561,7 @@ export function getText(element) {
   })
 
   text = text.replaceAll(' ', ' ').replace(/ +/g, ' ').trim()
+  // console.log([text])
   return text
 }
 
