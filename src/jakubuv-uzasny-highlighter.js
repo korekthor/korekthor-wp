@@ -542,16 +542,19 @@ const processed_elements = [];
 
 export function getText(element) {
   const blocks = getBlocks(element, window)
+  // console.log(blocks)
   let text = ''
   let lastParent = null
   
   blocks.forEach((block) => { 
     const nextSibling = block.node.nextSibling || block.node.parentElement.nextSibling
+    // console.log(nextSibling)
     
     if ((lastParent !== block.parent && lastParent !== null)
     || nextSibling?.nodeName === 'BR'
     || nextSibling?.nodeName === 'TH'
     || nextSibling?.nodeName === 'TD'
+    || nextSibling?.nodeName === 'IMG'
     || block.parent.tagName === 'OL'
     || block.parent.tagName === 'UL')  {
         text += '\n' + block.content + '\n'
