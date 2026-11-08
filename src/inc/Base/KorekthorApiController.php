@@ -63,6 +63,12 @@ class KorekthorApiController {
     return json_decode(wp_remote_retrieve_body($response), true);
   }
 
+  public static function get_warning_codes() {
+    $response = wp_remote_get("https://korekthor.cz/api/varovani");
+
+    return json_decode(wp_remote_retrieve_body($response), true);
+  }
+
   public static function correct_text($text, $dictionaries = []) {
     $api_key = get_option("korekthor_api_key");
     if (!$api_key) {

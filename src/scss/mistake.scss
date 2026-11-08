@@ -173,3 +173,33 @@
   font-style: italic;
 }
 
+.korekthor-warning-box {
+  background-color: #e67e22;
+  color: #fff;
+  border-radius: 0.4rem;
+  padding: 0.65rem 0.85rem;
+  margin: 0.5rem 1rem 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: 13px;
+  line-height: 1.4;
+
+  .korekthor-warning-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    color: #fff;
+  }
+
+  span {
+    color: #fff;
+  }
+}
+
+.korekthor-classic .korekthor-warning-box,
+#korekthor-classic-main > .korekthor-warning-box {
+  margin-left: 0;
+  margin-right: 0;
+}
+

@@ -25,7 +25,74 @@ const replaceFirstOccurrence = (str: string, token: string, replacement: string)
   return str.slice(0, idx) + cleanReplacement + str.slice(idx + cleanToken.length);
 };
 
-function parseApiErrors(data: any[]): any[] {
+const DEFAULT_WARNING_MESSAGES: Record<string, string> = {
+  LLM_API_CHYBA: "Nepodařilo se opravit text. Prosím nahlaste tuto chybu na info@korekthor.cz.",
+  LLM_SPATNY_VYSTUP: "Část textu se nepodařilo opravit. Prosím nahlaste tuto chybu na info@korekthor.cz.",
+  PRILIS_VZDALENO: "Část textu se nepodařilo opravit. Prosím nahlaste tuto chybu na info@korekthor.cz.",
+};
+
+const SVG_EXCLAMATION =
+  '<svg class="korekthor-warning-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="14"></line><circle cx="12" cy="19" r="0.5" fill="currentColor"></circle></svg>';
+
+function extractWarningsFromResponse(data: any): string[] {
+  const warnings = new Set<string>();
+  if (!data || typeof data !== "object") return [];
+
+  if (Array.isArray(data.warnings)) {
+    data.warnings.forEach((w: string) => warnings.add(w));
+  }
+
+  const paragraphs = Array.isArray(data) ? data : data.paragraphs;
+  if (Array.isArray(paragraphs)) {
+    for (const p of paragraphs) {
+      if (Array.isArray(p?.warnings)) {
+        p.warnings.forEach((w: string) => warnings.add(w));
+      }
+      if (Array.isArray(p?.sentences)) {
+        for (const s of p.sentences) {
+          if (Array.isArray(s?.warnings)) {
+            s.warnings.forEach((w: string) => warnings.add(w));
+          }
+        }
+      }
+    }
+  }
+
+  return Array.from(warnings);
+}
+
+function resolveWarningMessage(warnings: string[]): string | null {
+  if (!warnings || warnings.length === 0) return null;
+  const warningSet = new Set(warnings);
+  const warningCodes = (window as any).korekthor_ajax?.warning_codes;
+  const defs: Record<string, string> =
+    warningCodes && Object.keys(warningCodes).length > 0 ? warningCodes : DEFAULT_WARNING_MESSAGES;
+
+  for (const [key, msg] of Object.entries(defs)) {
+    if (warningSet.has(key)) {
+      return msg;
+    }
+  }
+
+  for (const w of warnings) {
+    if (DEFAULT_WARNING_MESSAGES[w]) {
+      return DEFAULT_WARNING_MESSAGES[w];
+    }
+  }
+
+  return null;
+}
+
+function createWarningBannerEl(message: string): HTMLElement {
+  const div = document.createElement("div");
+  div.className = "korekthor-warning-box";
+  div.innerHTML = `${SVG_EXCLAMATION}<span></span>`;
+  const span = div.querySelector("span");
+  if (span) span.textContent = message;
+  return div;
+}
+
+function parseApiErrors(data: any): any[] {
   const wordsWithErrors: any[] = [];
   let errors: string[] = [];
   let unknown_word = "";
@@ -33,14 +100,17 @@ function parseApiErrors(data: any[]): any[] {
   let connect_to_token = false;
   let connect_to_result = false;
 
-  if (!data || !Array.isArray(data)) return [];
+  const paragraphs = Array.isArray(data) ? data : data?.paragraphs;
+  if (!paragraphs || !Array.isArray(paragraphs)) return [];
 
   let index = -1;
 
-  data.forEach((paragraph: any) => {
+  paragraphs.forEach((paragraph: any) => {
     let oneToken = "";
     let oneResult = "";
-    const words = paragraph.sentences ? paragraph.sentences.flat() : [];
+    const words = paragraph.sentences
+      ? paragraph.sentences.flatMap((s: any) => (Array.isArray(s) ? s : s?.words || []))
+      : [];
 
     words.forEach((wordData: any, indexWord: number) => {
       wordData.errors.forEach((error: any) => {
@@ -124,7 +194,7 @@ const correct_request = (text: string) =>
       });
   });
 
-const setup_ok_screen = () => {
+const setup_ok_screen = (warningMessage?: string | null) => {
   const tAnno = document.getElementById("korekthor-title-annotations");
   if (tAnno) tAnno.remove();
   const pAnno = document.getElementById("korekthor-perex-annotations");
@@ -136,6 +206,13 @@ const setup_ok_screen = () => {
   if (perexInput) perexInput.classList.remove("korekthor-input-highlight");
 
   apply_template("korekthor-classic-ok", true);
+
+  if (warningMessage) {
+    const mainEl = document.getElementById("korekthor-classic-main");
+    if (mainEl) {
+      mainEl.insertBefore(createWarningBannerEl(warningMessage), mainEl.firstChild);
+    }
+  }
 
   const pEl = document.querySelector("#korekthor-classic-main .korekthor-text-ok p");
   if (pEl) {
@@ -205,6 +282,13 @@ export const correct = async () => {
       perexText ? correct_request(perexText) : Promise.resolve({ data: { data: [] } }),
       contentText ? correct_request(contentText) : Promise.resolve({ data: { data: [] } }),
     ]);
+
+    const allWarnings = [
+      ...extractWarningsFromResponse(titleRes?.data?.data),
+      ...extractWarningsFromResponse(perexRes?.data?.data),
+      ...extractWarningsFromResponse(textRes?.data?.data),
+    ];
+    const currentWarningMessage = resolveWarningMessage(allWarnings);
 
     let currentTitleText = titleInput ? titleInput.value : titleText;
     let titleMistakes = parseApiErrors(titleRes?.data?.data || []);
@@ -403,7 +487,7 @@ export const correct = async () => {
 
       const totalCount = titleMistakes.length + perexMistakes.length + textMistakes.length;
       if (totalCount === 0) {
-        setup_ok_screen();
+        setup_ok_screen(currentWarningMessage);
         return;
       }
 
@@ -450,6 +534,10 @@ export const correct = async () => {
       });
       recheckDiv.appendChild(recheckBtn);
       list.appendChild(recheckDiv);
+
+      if (currentWarningMessage) {
+        list.appendChild(createWarningBannerEl(currentWarningMessage));
+      }
 
       // 3. Sections: only include sections with at least 1 mistake
       const allSections = [
@@ -539,7 +627,7 @@ export const correct = async () => {
       const activeSections = allSections.filter((section) => section.mistakes.length > 0);
 
       if (activeSections.length === 0) {
-        setup_ok_screen();
+        setup_ok_screen(currentWarningMessage);
         return;
       }
 

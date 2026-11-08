@@ -192,13 +192,16 @@ function getErrors(data) {
 
   if (!data) return []
 
+  const paragraphs = Array.isArray(data) ? data : (data.paragraphs || [])
+  if (!Array.isArray(paragraphs)) return []
+
   let index = -1
 
-  data.forEach(paragraph => {
+  paragraphs.forEach(paragraph => {
     let oneToken = ''
     let oneResult = ''
-    const words = paragraph.sentences.flat()
-    if (paragraph.end_paragraphs > 0){
+    const words = (paragraph.sentences || []).flatMap(s => Array.isArray(s) ? s : (s.words || []))
+    if (paragraph.end_paragraphs > 0 && words.length > 0){
       const last = words[words.length - 1]
       last.connect_with_after = true
       last.original_token.connect_with_after = true

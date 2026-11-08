@@ -42,6 +42,8 @@ class Utils extends BaseController {
     $dictionaries = KorekthorApiController::get_dictionaries();
 
     $dictionaries_data = isset($dictionaries['data']) ? $dictionaries['data'] : [];
+    $error_codes_res = KorekthorApiController::get_error_codes();
+    $warning_codes_res = KorekthorApiController::get_warning_codes();
 
     wp_localize_script(
       $name,
@@ -52,7 +54,8 @@ class Utils extends BaseController {
         "dictionaries" => $dictionaries_data,
         "dictionaries_error" => $dictionaries['error'] ?? null,
         "dictionaries_selected" => get_user_meta(get_current_user_id(), "korekthor_dictionaries", true),
-        "error_codes" => KorekthorApiController::get_error_codes()["errors"],
+        "error_codes" => isset($error_codes_res["errors"]) ? $error_codes_res["errors"] : [],
+        "warning_codes" => isset($warning_codes_res["warnings"]) ? $warning_codes_res["warnings"] : (is_array($warning_codes_res) ? $warning_codes_res : []),
       ),
     );
   }
