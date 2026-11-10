@@ -17,10 +17,18 @@ class KorekthorApiController {
     }
 
     $response = wp_remote_get(KOREKTHOR_API_URL . "/company", [
+      "timeout" => 5,
       "headers" => [
         "X-API-KEY" => $api_key,
       ],
     ]);
+
+    if (is_wp_error($response)) {
+      $error_msg = $response->get_error_message();
+      return [
+        "error" => "Nepodařilo se načíst data o firmě. Server odpověděl: <code>$error_msg</code>",
+      ];
+    }
 
     $status = wp_remote_retrieve_response_code($response);
     $decoded_body = json_decode(wp_remote_retrieve_body($response), true);
@@ -39,7 +47,23 @@ class KorekthorApiController {
   }
 
   public static function get_dictionaries() {
-    $response = wp_remote_get(KOREKTHOR_API_URL . "/dictionary/plugin");
+    $cache_key = "korekthor_dictionaries_cache";
+    $cached = get_transient($cache_key);
+    if ($cached !== false && is_array($cached)) {
+      return $cached;
+    }
+
+    $response = wp_remote_get(KOREKTHOR_API_URL . "/dictionary/plugin", [
+      "timeout" => 5,
+    ]);
+
+    if (is_wp_error($response)) {
+      $result = [
+        "error" => "Odpoveď serveru: " . $response->get_error_message(),
+      ];
+      set_transient($cache_key, $result, MINUTE_IN_SECONDS);
+      return $result;
+    }
 
     $status = wp_remote_retrieve_response_code($response);
     $decoded_body = json_decode(wp_remote_retrieve_body($response), true);
@@ -47,26 +71,71 @@ class KorekthorApiController {
     if ($status !== 200) {
       $error = "$status - " . (isset($decoded_body["error"]) ? $decoded_body["error"] : "Neznámá chyba.");
 
-      return [
+      $result = [
         "error" => "Odpoveď serveru: $error",
       ];
+      set_transient($cache_key, $result, MINUTE_IN_SECONDS);
+      return $result;
     }
 
-    return [
+    $result = [
       "data" => $decoded_body,
     ];
+    set_transient($cache_key, $result, HOUR_IN_SECONDS);
+
+    return $result;
   }
 
   public static function get_error_codes() {
-    $response = wp_remote_get("https://korekthor.cz/api/chyby");
+    $cache_key = "korekthor_error_codes_cache";
+    $cached = get_transient($cache_key);
+    if ($cached !== false && is_array($cached)) {
+      return $cached;
+    }
 
-    return json_decode(wp_remote_retrieve_body($response), true);
+    $response = wp_remote_get("https://korekthor.cz/api/chyby", [
+      "timeout" => 5,
+    ]);
+
+    if (is_wp_error($response) || wp_remote_retrieve_response_code($response) !== 200) {
+      set_transient($cache_key, [], MINUTE_IN_SECONDS);
+      return [];
+    }
+
+    $decoded = json_decode(wp_remote_retrieve_body($response), true);
+    if (!is_array($decoded)) {
+      set_transient($cache_key, [], MINUTE_IN_SECONDS);
+      return [];
+    }
+
+    set_transient($cache_key, $decoded, 6 * HOUR_IN_SECONDS);
+    return $decoded;
   }
 
   public static function get_warning_codes() {
-    $response = wp_remote_get("https://korekthor.cz/api/varovani");
+    $cache_key = "korekthor_warning_codes_cache";
+    $cached = get_transient($cache_key);
+    if ($cached !== false && is_array($cached)) {
+      return $cached;
+    }
 
-    return json_decode(wp_remote_retrieve_body($response), true);
+    $response = wp_remote_get("https://korekthor.cz/api/varovani", [
+      "timeout" => 5,
+    ]);
+
+    if (is_wp_error($response) || wp_remote_retrieve_response_code($response) !== 200) {
+      set_transient($cache_key, [], MINUTE_IN_SECONDS);
+      return [];
+    }
+
+    $decoded = json_decode(wp_remote_retrieve_body($response), true);
+    if (!is_array($decoded)) {
+      set_transient($cache_key, [], MINUTE_IN_SECONDS);
+      return [];
+    }
+
+    set_transient($cache_key, $decoded, 6 * HOUR_IN_SECONDS);
+    return $decoded;
   }
 
   public static function correct_text($text, $dictionaries = []) {

@@ -49,7 +49,7 @@ class Utils extends BaseController {
       $name,
       "korekthor_ajax",
       array(
-        "nonce" => AjaxController::$korekthor_nonce,
+        "nonce" => AjaxController::$korekthor_nonce ?: wp_create_nonce("korekthor_req"),
         "plugin_url" => $this->plugin_url,
         "dictionaries" => $dictionaries_data,
         "dictionaries_error" => $dictionaries['error'] ?? null,

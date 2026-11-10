@@ -61,7 +61,7 @@ class Updater extends BaseController {
 
     // Hook into WordPress transient update checks
     add_filter("pre_set_site_transient_update_plugins", [$this, "check_update"]);
-    add_filter("site_transient_update_plugins", [$this, "check_update"]);
+    add_filter("site_transient_update_plugins", [$this, "check_update_cached"]);
 
     // Hook into plugin information modal ("View version details")
     add_filter("plugins_api", [$this, "plugin_info"], 20, 3);
@@ -71,12 +71,36 @@ class Updater extends BaseController {
   }
 
   /**
-   * Check for plugin updates against remote JSON endpoint
+   * Check for plugin updates against remote JSON endpoint (when saving transient)
    *
    * @param object $transient
    * @return object
    */
   public function check_update($transient) {
+    return $this->apply_update_info($transient, true);
+  }
+
+  /**
+   * Read-time filter for update_plugins transient.
+   * Only allows network requests on plugins.php / update-core.php; otherwise uses cached transient only.
+   *
+   * @param object $transient
+   * @return object
+   */
+  public function check_update_cached($transient) {
+    global $pagenow;
+    $allow_network = ($pagenow === "plugins.php" || $pagenow === "update-core.php");
+    return $this->apply_update_info($transient, $allow_network);
+  }
+
+  /**
+   * Apply remote update info to the update_plugins transient object
+   *
+   * @param object $transient
+   * @param bool $allow_network
+   * @return object
+   */
+  private function apply_update_info($transient, $allow_network = true) {
     if (empty($transient) || !is_object($transient)) {
       return $transient;
     }
@@ -89,7 +113,7 @@ class Updater extends BaseController {
       $transient->no_update = [];
     }
 
-    $remote = $this->get_remote_info();
+    $remote = $this->get_remote_info($allow_network);
     if (!$remote || empty($remote->version)) {
       return $transient;
     }
@@ -213,9 +237,10 @@ class Updater extends BaseController {
   /**
    * Fetch remote plugin metadata from URL with transient caching
    *
+   * @param bool $allow_network Whether to make an HTTP request if transient is expired/missing
    * @return object|false
    */
-  private function get_remote_info() {
+  private function get_remote_info($allow_network = true) {
     if ($this->remote_info !== null) {
       return $this->remote_info;
     }
@@ -225,14 +250,22 @@ class Updater extends BaseController {
 
     if (!$force_check) {
       $cached = get_transient($this->cache_key);
+      if ($cached === "error") {
+        $this->remote_info = false;
+        return false;
+      }
       if ($cached !== false && is_object($cached)) {
         $this->remote_info = $cached;
         return $this->remote_info;
       }
     }
 
+    if (!$allow_network) {
+      return false;
+    }
+
     $response = wp_remote_get($this->update_url, [
-      "timeout" => 10,
+      "timeout" => 5,
       "headers" => [
         "Accept" => "application/json",
         "User-Agent" => "WordPress/" . get_bloginfo("version") . "; " . home_url(),
@@ -240,6 +273,8 @@ class Updater extends BaseController {
     ]);
 
     if (is_wp_error($response) || wp_remote_retrieve_response_code($response) !== 200) {
+      set_transient($this->cache_key, "error", 15 * MINUTE_IN_SECONDS);
+      $this->remote_info = false;
       return false;
     }
 
@@ -247,6 +282,8 @@ class Updater extends BaseController {
     $data = json_decode($body);
 
     if (!is_object($data) || empty($data->version)) {
+      set_transient($this->cache_key, "error", 15 * MINUTE_IN_SECONDS);
+      $this->remote_info = false;
       return false;
     }
 

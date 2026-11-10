@@ -11,7 +11,7 @@ class AjaxController {
 
   public function register() {
     // set nonce
-    add_action("init", array($this, "create_nonce"));
+    add_action("admin_init", array($this, "create_nonce"));
     add_action("wp_ajax_korekthor_correction", array($this, "correct_text"));
     add_action("wp_ajax_korekthor_update_dictionaries", array($this, "update_dictionaries"));
   }

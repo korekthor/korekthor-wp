@@ -3,7 +3,7 @@ Contributors: tenviki
 Tags: czech,correction
 Requires at least: 4.7
 Tested up to: 5.4
-Stable tag: 1.2.1
+Stable tag: 1.2.3
 Requires PHP: 7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -47,6 +47,12 @@ Answer to foo bar dilemma.
 2. This is the second screen shot
 
 == Changelog ==
+
+= 1.2.3 =
+* Výrazné zrychlení administrace WordPressu a načítání editoru (cachování API požadavků a optimalizace kontrol aktualizací).
+
+= 1.2.2 =
+* Opravy chyb a vylepšení zpětné vazby při kontrole textu.
 
 = 1.2.1 =
 * Zlepšení stability a spolehlivosti systému.

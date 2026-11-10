@@ -18,6 +18,8 @@ class Dashboard extends BaseController {
   public $api_controller;
 
   public function register() {
+    if (!is_admin()) return;
+
     $this->callbacks = new AdminCallbacks();
     $this->settings = new SettingsApi();
     $this->set_pages();
