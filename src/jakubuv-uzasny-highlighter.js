@@ -543,21 +543,24 @@ const processed_elements = [];
  * @param {Element} element
  */
 
+const specific_elements = ["BR", "TH", "TD"]
+
 export function getText(element) {
   const blocks = getBlocks(element, window)
-  // console.log(blocks)
+  console.log(blocks)
   let text = ''
   let lastParent = null
   
   blocks.forEach((block) => { 
     const nextSibling = block.node.nextSibling || block.node.parentElement.nextSibling
+    const previousSibling = block.node.previousSibling || block.node.parentElement.nextSibling
     // console.log(nextSibling)
-    
+    console.log(block.node)
+    console.log(block.content) 
     if ((lastParent !== block.parent && lastParent !== null)
-    || nextSibling?.nodeName === 'BR'
-    || nextSibling?.nodeName === 'TH'
-    || nextSibling?.nodeName === 'TD'
-    || nextSibling?.nodeName === 'IMG'
+    || specific_elements.includes(nextSibling?.nodeName)
+    || specific_elements.includes(previousSibling?.nodeName)
+    // || nextSibling?.nodeName === 'IMG'
     || block.parent.tagName === 'OL'
     || block.parent.tagName === 'UL')  {
         text += '\n' + block.content + '\n'
@@ -567,7 +570,7 @@ export function getText(element) {
   })
 
   text = text.replaceAll(' ', ' ').replace(/ +/g, ' ').trim()
-  // console.log([text])
+  console.log([text])
   return text
 }
 
