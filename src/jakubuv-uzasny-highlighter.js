@@ -670,7 +670,8 @@ export function runHighlight(element, content, sendObj) {
         // get new content
         let new_text = element.innerText
         if (old_text_str === new_text) {
-            return console.log("same") // igonre if text is the same
+            // do NOT ignore same input. This function also handle html mutation like putting text to strong element which change it size. 
+            // return console.log("same") // igonre if text is the same
         }
             
         if (!e.isTrusted || underlineObjects.length === 0) {
@@ -699,7 +700,7 @@ export function runHighlight(element, content, sendObj) {
         // save original selection inside textarea
 
         if (new_text.toString() === old_text.toString()) {
-            console.log("same 55")
+            // console.log("same 55")
             const newUnderlineObjects = []
 
             // save all ranges
